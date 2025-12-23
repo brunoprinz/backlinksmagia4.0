@@ -99,3 +99,19 @@ export const generateGuestPostTopics = async (targetSite: string, niche: string,
     return [];
   }
 };
+
+// 7. Analisar Saúde do Domínio (Necessário para o BacklinkTracker)
+export const analyzeDomainHealth = async (domain: string, lang: Language = 'en'): Promise<any> => {
+  const prompt = `Analyze the domain health and backlink profile of "${domain}" in ${lang}. Provide a JSON with technicalSEO (score 0-100), backlinkQuality (score 0-100), and topRecommendations (array of strings).`;
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: prompt,
+      config: { tools: [{googleSearch: {}}], responseMimeType: 'application/json' }
+    });
+    return JSON.parse(response.text || "{}");
+  } catch (error) {
+    console.error("Error in analyzeDomainHealth:", error);
+    return { technicalSEO: 0, backlinkQuality: 0, topRecommendations: [] };
+  }
+};
