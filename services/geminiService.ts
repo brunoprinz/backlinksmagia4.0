@@ -115,3 +115,34 @@ export const analyzeDomainHealth = async (domain: string, lang: Language = 'en')
     return { technicalSEO: 0, backlinkQuality: 0, topRecommendations: [] };
   }
 };
+
+// 8. Análise de Palavras-chave Volume Zero (KGR) - Necessário para KgrCalculator
+export const analyzeZeroVolumeKeyword = async (keyword: string, lang: Language = 'en'): Promise<ZeroVolumeAnalysis> => {
+  const prompt = `Analyze the KGR (Keyword Golden Ratio) potential for "${keyword}" in ${lang}. JSON: competitionLevel (0-100), efficiencyScore (0-100), recommendation (string).`;
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: prompt,
+      config: { responseMimeType: 'application/json' }
+    });
+    return JSON.parse(response.text || "{}");
+  } catch (error) {
+    return { competitionLevel: 0, efficiencyScore: 0, recommendation: "Error analyzing" };
+  }
+};
+
+// 9. Análise On-Page - Necessário para SEOAnalyzer
+export const analyzeOnPageSEO = async (url: string, keyword: string, lang: Language = 'en'): Promise<OnPageAnalysis> => {
+  const prompt = `Perform On-Page SEO analysis for ${url} targeting ${keyword} in ${lang}. JSON: score (0-100), issues (array of strings), improvements (array of strings).`;
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: prompt,
+      config: { tools: [{googleSearch: {}}], responseMimeType: 'application/json' }
+    });
+    return JSON.parse(response.text || "{}");
+  } catch (error) {
+    return { score: 0, issues: [], improvements: [] };
+  }
+};
+
