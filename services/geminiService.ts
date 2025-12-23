@@ -1,6 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { BacklinkOpportunity, ContentStrategy, OutreachTemplate, KeywordIdea, Language } from "../types";
 
+// Note que usamos process.env.API_KEY, que você deve configurar no painel do Netlify
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
 
 // 1. Encontrar oportunidades de Backlinks
@@ -51,7 +52,7 @@ export const analyzeCompetitorGap = async (competitorUrl: string, topic: string,
   }
 };
 
-// 4. Gerar Estratégia de Conteúdo (Necessário para ContentMagician)
+// 4. Gerar Estratégia de Conteúdo
 export const generateContentStrategy = async (topic: string, lang: Language = 'en'): Promise<ContentStrategy> => {
   const prompt = `Create content strategy for "${topic}" in ${lang}. JSON with pillarTitle, clusters (array), targetAudience, suggestedFormat.`;
   try {
@@ -67,7 +68,7 @@ export const generateContentStrategy = async (topic: string, lang: Language = 'e
   }
 };
 
-// 5. Gerar E-mail de Outreach (A QUE ESTAVA FALTANDO!)
+// 5. Gerar E-mail de Outreach (Necessário para o OutreachAssistant)
 export const generateOutreachEmail = async (targetSite: string, strategy: string, niche: string, lang: Language = 'en'): Promise<OutreachTemplate> => {
   const prompt = `Write a professional backlink outreach email for ${targetSite} using ${strategy} strategy about ${niche} in ${lang}. JSON with subject, body.`;
   try {
@@ -83,7 +84,7 @@ export const generateOutreachEmail = async (targetSite: string, strategy: string
   }
 };
 
-// 6. Gerar Tópicos para Guest Post (A QUE ESTAVA FALTANDO!)
+// 6. Gerar Tópicos para Guest Post (Necessário para o OutreachAssistant)
 export const generateGuestPostTopics = async (targetSite: string, niche: string, lang: Language = 'en'): Promise<string[]> => {
   const prompt = `Suggest 5 guest post topics for ${targetSite} in the ${niche} niche in ${lang}. JSON array of strings.`;
   try {
