@@ -1,150 +1,100 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { BacklinkOpportunity, ContentStrategy, OutreachTemplate, KeywordIdea, Language, ZeroVolumeAnalysis, OnPageAnalysis, TrackedSite } from "../types";
+import { BacklinkOpportunity, ContentStrategy, OutreachTemplate, KeywordIdea, Language } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
 
-// 1. Analyze a niche to find backlink candidates
+// 1. Encontrar oportunidades de Backlinks
 export const findBacklinkOpportunities = async (niche: string, lang: Language = 'en'): Promise<BacklinkOpportunity[]> => {
-  const prompt = `
-    Use Google Search to analyze the niche "${niche}". Identify 5 REAL, active, high-authority websites...
-    IMPORTANT: Respond in the language code: "${lang}".
-    Provide the output in JSON format.
-  `;
-
+  const prompt = `Identify 5 REAL websites for link building in the niche "${niche}" (Language: ${lang}). Provide JSON with siteName, url, domainAuthority, relevanceScore, strategy, contactInfo.`;
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-1.5-flash',
       contents: prompt,
-      config: {
-        tools: [{googleSearch: {}}],
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              siteName: { type: Type.STRING },
-              url: { type: Type.STRING },
-              domainAuthority: { type: Type.NUMBER },
-              relevanceScore: { type: Type.NUMBER },
-              strategy: { type: Type.STRING },
-              contactInfo: { type: Type.STRING }
-            }
-          }
-        }
-      }
+      config: { tools: [{googleSearch: {}}], responseMimeType: 'application/json' }
     });
-
-    return JSON.parse(response.text || "[]") as BacklinkOpportunity[];
+    return JSON.parse(response.text || "[]");
   } catch (error) {
-    console.error("Gemini API Error (Opportunities):", error);
+    console.error("Error in findBacklinkOpportunities:", error);
     return [];
   }
 };
 
-// 2. Generate Keywords
+// 2. Gerar Palavras-chave
 export const generateKeywords = async (seedKeyword: string, lang: Language = 'en'): Promise<KeywordIdea[]> => {
-  const prompt = `Act as an SEO expert... Generate 10 high-potential long-tail keywords for "${seedKeyword}" in "${lang}".`;
-
+  const prompt = `Generate 10 long-tail keywords for "${seedKeyword}" in ${lang}. Provide JSON array with keyword, intent, difficulty, contentIdea.`;
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-1.5-flash',
       contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              keyword: { type: Type.STRING },
-              intent: { type: Type.STRING, enum: ['Informational', 'Commercial', 'Transactional'] },
-              difficulty: { type: Type.STRING },
-              contentIdea: { type: Type.STRING }
-            }
-          }
-        }
-      }
+      config: { responseMimeType: 'application/json' }
     });
-
-    return JSON.parse(response.text || "[]") as KeywordIdea[];
+    return JSON.parse(response.text || "[]");
   } catch (error) {
-    console.error("Gemini API Error (Keywords):", error);
+    console.error("Error in generateKeywords:", error);
     return [];
   }
 };
 
-// 3. NOVA FUN��O: Generate Content Strategy (A que estava faltando!)
-export const generateContentStrategy = async (topic: string, lang: Language = 'en'): Promise<ContentStrategy> => {
-  const prompt = `
-    Create a comprehensive Content Strategy for the topic: "${topic}".
-    The strategy must include:
-    1. A main pillar article title.
-    2. 3 supporting sub-topics (cluster content).
-    3. Target audience description.
-    4. Suggested content format (Video, Long-form blog, etc.).
-    
-    IMPORTANT: Respond in language code: "${lang}".
-    Output JSON format.
-  `;
-
+// 3. Analisar Gap de Competidores
+export const analyzeCompetitorGap = async (competitorUrl: string, topic: string, lang: Language = 'en'): Promise<KeywordIdea[]> => {
+  const prompt = `Analyze ${competitorUrl} for topic "${topic}" in ${lang}. Find 10 keyword gaps. JSON array with keyword, intent, difficulty, contentIdea.`;
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-1.5-flash',
       contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            pillarTitle: { type: Type.STRING },
-            clusters: { 
-              type: Type.ARRAY,
-              items: { type: Type.STRING }
-            },
-            targetAudience: { type: Type.STRING },
-            suggestedFormat: { type: Type.STRING }
-          }
-        }
-      }
+      config: { tools: [{googleSearch: {}}], responseMimeType: 'application/json' }
     });
-
-    return JSON.parse(response.text || "{}") as ContentStrategy;
+    return JSON.parse(response.text || "[]");
   } catch (error) {
-    console.error("Gemini API Error (Strategy):", error);
+    console.error("Error in analyzeCompetitorGap:", error);
+    return [];
+  }
+};
+
+// 4. Gerar Estratégia de Conteúdo (Necessário para ContentMagician)
+export const generateContentStrategy = async (topic: string, lang: Language = 'en'): Promise<ContentStrategy> => {
+  const prompt = `Create content strategy for "${topic}" in ${lang}. JSON with pillarTitle, clusters (array), targetAudience, suggestedFormat.`;
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: prompt,
+      config: { responseMimeType: 'application/json' }
+    });
+    return JSON.parse(response.text || "{}");
+  } catch (error) {
+    console.error("Error in generateContentStrategy:", error);
     throw error;
   }
 };
 
-// 4. Analyze Competitor Gap
-export const analyzeCompetitorGap = async (competitorUrl: string, topic: string, lang: Language = 'en'): Promise<KeywordIdea[]> => {
-  const prompt = `Analyze competitor "${competitorUrl}" for topic "${topic}" in language "${lang}"...`;
-
+// 5. Gerar E-mail de Outreach (A QUE ESTAVA FALTANDO!)
+export const generateOutreachEmail = async (targetSite: string, strategy: string, niche: string, lang: Language = 'en'): Promise<OutreachTemplate> => {
+  const prompt = `Write a professional backlink outreach email for ${targetSite} using ${strategy} strategy about ${niche} in ${lang}. JSON with subject, body.`;
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-1.5-flash',
       contents: prompt,
-      config: {
-        tools: [{googleSearch: {}}],
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              keyword: { type: Type.STRING },
-              intent: { type: Type.STRING, enum: ['Informational', 'Commercial', 'Transactional'] },
-              difficulty: { type: Type.STRING },
-              contentIdea: { type: Type.STRING }
-            }
-          }
-        }
-      }
+      config: { responseMimeType: 'application/json' }
     });
-
-    return JSON.parse(response.text || "[]") as KeywordIdea[];
+    return JSON.parse(response.text || "{}");
   } catch (error) {
-    console.error("Gemini API Error (Competitor Gap):", error);
+    console.error("Error in generateOutreachEmail:", error);
+    return { subject: "Error generating email", body: "" };
+  }
+};
+
+// 6. Gerar Tópicos para Guest Post (A QUE ESTAVA FALTANDO!)
+export const generateGuestPostTopics = async (targetSite: string, niche: string, lang: Language = 'en'): Promise<string[]> => {
+  const prompt = `Suggest 5 guest post topics for ${targetSite} in the ${niche} niche in ${lang}. JSON array of strings.`;
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: prompt,
+      config: { responseMimeType: 'application/json' }
+    });
+    return JSON.parse(response.text || "[]");
+  } catch (error) {
+    console.error("Error in generateGuestPostTopics:", error);
     return [];
   }
 };
