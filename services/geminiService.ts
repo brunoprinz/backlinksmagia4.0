@@ -1,12 +1,21 @@
-import { GoogleGenAI, Type } from "@google/genai";
-import { BacklinkOpportunity, ContentStrategy, OutreachTemplate, KeywordIdea, Language } from "../types";
+import { GoogleGenAI } from "@google/genai";
+import { 
+  BacklinkOpportunity, 
+  ContentStrategy, 
+  OutreachTemplate, 
+  KeywordIdea, 
+  Language, 
+  ZeroVolumeAnalysis, 
+  OnPageAnalysis,
+  TrackedSite 
+} from "../types";
 
-// Note que usamos process.env.API_KEY, que você deve configurar no painel do Netlify
+// A chave será puxada das configurações da Vercel/Netlify ou .env local
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
 
-// 1. Encontrar oportunidades de Backlinks
+// 1. Encontrar Oportunidades de Backlinks (OpportunityFinder.tsx)
 export const findBacklinkOpportunities = async (niche: string, lang: Language = 'en'): Promise<BacklinkOpportunity[]> => {
-  const prompt = `Identify 5 REAL websites for link building in the niche "${niche}" (Language: ${lang}). Provide JSON with siteName, url, domainAuthority, relevanceScore, strategy, contactInfo.`;
+  const prompt = `Analyze the niche "${niche}" in ${lang}. Find 5 REAL high-authority websites for guest posting or skyscraper. JSON: siteName, url, domainAuthority (30-90), relevanceScore (0-100), strategy, contactInfo.`;
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
@@ -14,15 +23,12 @@ export const findBacklinkOpportunities = async (niche: string, lang: Language = 
       config: { tools: [{googleSearch: {}}], responseMimeType: 'application/json' }
     });
     return JSON.parse(response.text || "[]");
-  } catch (error) {
-    console.error("Error in findBacklinkOpportunities:", error);
-    return [];
-  }
+  } catch (error) { return []; }
 };
 
-// 2. Gerar Palavras-chave
+// 2. Pesquisa de Palavras-chave (KeywordResearcher.tsx)
 export const generateKeywords = async (seedKeyword: string, lang: Language = 'en'): Promise<KeywordIdea[]> => {
-  const prompt = `Generate 10 long-tail keywords for "${seedKeyword}" in ${lang}. Provide JSON array with keyword, intent, difficulty, contentIdea.`;
+  const prompt = `10 long-tail keywords for "${seedKeyword}" in ${lang}. JSON array: keyword, intent (Informational/Commercial/Transactional), difficulty (Low/Medium/High), contentIdea.`;
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
@@ -30,15 +36,12 @@ export const generateKeywords = async (seedKeyword: string, lang: Language = 'en
       config: { responseMimeType: 'application/json' }
     });
     return JSON.parse(response.text || "[]");
-  } catch (error) {
-    console.error("Error in generateKeywords:", error);
-    return [];
-  }
+  } catch (error) { return []; }
 };
 
-// 3. Analisar Gap de Competidores
+// 3. Gap de Competidores (KeywordResearcher.tsx)
 export const analyzeCompetitorGap = async (competitorUrl: string, topic: string, lang: Language = 'en'): Promise<KeywordIdea[]> => {
-  const prompt = `Analyze ${competitorUrl} for topic "${topic}" in ${lang}. Find 10 keyword gaps. JSON array with keyword, intent, difficulty, contentIdea.`;
+  const prompt = `Analyze ${competitorUrl} for "${topic}" in ${lang}. Find 10 gaps. JSON array: keyword, intent, difficulty, contentIdea.`;
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
@@ -46,15 +49,12 @@ export const analyzeCompetitorGap = async (competitorUrl: string, topic: string,
       config: { tools: [{googleSearch: {}}], responseMimeType: 'application/json' }
     });
     return JSON.parse(response.text || "[]");
-  } catch (error) {
-    console.error("Error in analyzeCompetitorGap:", error);
-    return [];
-  }
+  } catch (error) { return []; }
 };
 
-// 4. Gerar Estratégia de Conteúdo
-export const generateContentStrategy = async (topic: string, lang: Language = 'en'): Promise<ContentStrategy> => {
-  const prompt = `Create content strategy for "${topic}" in ${lang}. JSON with pillarTitle, clusters (array), targetAudience, suggestedFormat.`;
+// 4. Estratégia de Conteúdo (ContentMagician.tsx)
+export const generateContentStrategy = async (topic: string, mode: string = 'magnet', lang: Language = 'en'): Promise<ContentStrategy> => {
+  const prompt = `Strategy for "${topic}" (Mode: ${mode}) in ${lang}. JSON: title, type, targetKeywords (array), outline (array), hook, contentBody.`;
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
@@ -62,15 +62,12 @@ export const generateContentStrategy = async (topic: string, lang: Language = 'e
       config: { responseMimeType: 'application/json' }
     });
     return JSON.parse(response.text || "{}");
-  } catch (error) {
-    console.error("Error in generateContentStrategy:", error);
-    throw error;
-  }
+  } catch (error) { throw error; }
 };
 
-// 5. Gerar E-mail de Outreach (Necessário para o OutreachAssistant)
-export const generateOutreachEmail = async (targetSite: string, strategy: string, niche: string, lang: Language = 'en'): Promise<OutreachTemplate> => {
-  const prompt = `Write a professional backlink outreach email for ${targetSite} using ${strategy} strategy about ${niche} in ${lang}. JSON with subject, body.`;
+// 5. E-mail de Outreach (OutreachAssistant.tsx)
+export const generateOutreachEmail = async (targetSite: string, contentTitle: string, strategy: string, lang: Language = 'en'): Promise<OutreachTemplate> => {
+  const prompt = `Outreach email for ${targetSite} about ${contentTitle} using ${strategy} in ${lang}. JSON: subject, body.`;
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
@@ -78,15 +75,12 @@ export const generateOutreachEmail = async (targetSite: string, strategy: string
       config: { responseMimeType: 'application/json' }
     });
     return JSON.parse(response.text || "{}");
-  } catch (error) {
-    console.error("Error in generateOutreachEmail:", error);
-    return { subject: "Error generating email", body: "" };
-  }
+  } catch (error) { return { subject: "Error", body: "" }; }
 };
 
-// 6. Gerar Tópicos para Guest Post (Necessário para o OutreachAssistant)
-export const generateGuestPostTopics = async (targetSite: string, niche: string, lang: Language = 'en'): Promise<string[]> => {
-  const prompt = `Suggest 5 guest post topics for ${targetSite} in the ${niche} niche in ${lang}. JSON array of strings.`;
+// 6. Sugestão de Tópicos (OutreachAssistant.tsx)
+export const generateGuestPostTopics = async (niche: string, lang: Language = 'en'): Promise<string[]> => {
+  const prompt = `5 guest post topics for ${niche} in ${lang}. JSON array of strings.`;
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
@@ -94,31 +88,12 @@ export const generateGuestPostTopics = async (targetSite: string, niche: string,
       config: { responseMimeType: 'application/json' }
     });
     return JSON.parse(response.text || "[]");
-  } catch (error) {
-    console.error("Error in generateGuestPostTopics:", error);
-    return [];
-  }
+  } catch (error) { return []; }
 };
 
-// 7. Analisar Saúde do Domínio (Necessário para o BacklinkTracker)
-export const analyzeDomainHealth = async (domain: string, lang: Language = 'en'): Promise<any> => {
-  const prompt = `Analyze the domain health and backlink profile of "${domain}" in ${lang}. Provide a JSON with technicalSEO (score 0-100), backlinkQuality (score 0-100), and topRecommendations (array of strings).`;
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: prompt,
-      config: { tools: [{googleSearch: {}}], responseMimeType: 'application/json' }
-    });
-    return JSON.parse(response.text || "{}");
-  } catch (error) {
-    console.error("Error in analyzeDomainHealth:", error);
-    return { technicalSEO: 0, backlinkQuality: 0, topRecommendations: [] };
-  }
-};
-
-// 8. Análise de Palavras-chave Volume Zero (KGR) - Necessário para KgrCalculator
+// 7. KGR - Keyword Golden Ratio (KgrCalculator.tsx)
 export const analyzeZeroVolumeKeyword = async (keyword: string, lang: Language = 'en'): Promise<ZeroVolumeAnalysis> => {
-  const prompt = `Analyze the KGR (Keyword Golden Ratio) potential for "${keyword}" in ${lang}. JSON: competitionLevel (0-100), efficiencyScore (0-100), recommendation (string).`;
+  const prompt = `Analyze KGR for "${keyword}" in ${lang}. JSON: potentialScore (0-100), verdict (High Potential/Uncertain/Low Potential), reasoning, suggestedVariations (array).`;
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
@@ -127,22 +102,33 @@ export const analyzeZeroVolumeKeyword = async (keyword: string, lang: Language =
     });
     return JSON.parse(response.text || "{}");
   } catch (error) {
-    return { competitionLevel: 0, efficiencyScore: 0, recommendation: "Error analyzing" };
+    return { potentialScore: 0, verdict: 'Uncertain', reasoning: "Error", suggestedVariations: [] };
   }
 };
 
-// 9. Análise On-Page - Necessário para SEOAnalyzer
-export const analyzeOnPageSEO = async (url: string, keyword: string, lang: Language = 'en'): Promise<OnPageAnalysis> => {
-  const prompt = `Perform On-Page SEO analysis for ${url} targeting ${keyword} in ${lang}. JSON: score (0-100), issues (array of strings), improvements (array of strings).`;
+// 8. Analisador On-Page (OnPageAnalyzer.tsx)
+export const analyzeOnPageContent = async (title: string, content: string, keyword: string, lang: Language = 'en'): Promise<OnPageAnalysis> => {
+  const prompt = `Analyze SEO for Title: ${title}, Content: ${content}, Keyword: ${keyword} in ${lang}. JSON: score (0-100), keywordDensity, readability, missingElements (array), actionableTips (array).`;
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
       contents: prompt,
-      config: { tools: [{googleSearch: {}}], responseMimeType: 'application/json' }
+      config: { responseMimeType: 'application/json' }
     });
     return JSON.parse(response.text || "{}");
   } catch (error) {
-    return { score: 0, issues: [], improvements: [] };
+    return { score: 0, keywordDensity: "0%", readability: "N/A", missingElements: [], actionableTips: [] };
   }
 };
 
+// 9. Health Check do Domínio (BacklinkTracker.tsx)
+export const analyzeDomainHealth = async (site: TrackedSite, lang: Language = 'en'): Promise<string> => {
+  const prompt = `Analyze domain health for ${site.url} (DR: ${site.dr}, Backlinks: ${site.backlinks}) in ${lang}. Provide a 2-sentence SEO summary.`;
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: prompt
+    });
+    return response.text || "Analysis unavailable.";
+  } catch (error) { return "Error analyzing domain."; }
+};
