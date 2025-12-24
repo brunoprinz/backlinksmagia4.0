@@ -3,16 +3,19 @@ import { BacklinkOpportunity, ContentStrategy, OutreachTemplate, KeywordIdea, La
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// Analyze a niche to find high-quality backlink candidates (Real Search)
+/**
+ * BACKLINK OPPORTUNITIES - Prospecção SAB
+ */
 export const findBacklinkOpportunities = async (niche: string, lang: Language = 'en'): Promise<BacklinkOpportunity[]> => {
   const prompt = `
-    Use Google Search to analyze the niche "${niche}". Identify 5 REAL, active, high-authority websites, blogs, or digital magazines 
-    that would be excellent targets for White Hat link building (e.g., Guest Posting, Skyscraper technique, Resource pages).
+    Use o Google Search para analisar o nicho "${niche}" sob a ótica da metodologia SAB (Serp Armor Breaker). 
+    Identifique 5 sites REAIS, ativos e de autoridade que aceitem parcerias ou guest posts.
+    
+    FOCO: Encontre parceiros que permitam criar autoridade para "quebrar" o Top 5 de palavras-chave competitivas.
     
     IMPORTANT: Respond in the language code: "${lang}".
     
-    For each site, estimate a Domain Authority (DA) between 30-90 based on their real-world reputation found in search, 
-    a Relevance Score (0-100) to the niche, and suggest a specific strategy to acquire a backlink from them.
+    Para cada site, estime o Domain Authority (DA), a relevância e uma estratégia específica (como Skyscraper ou Guest Post).
     
     Provide the output in JSON format.
   `;
@@ -50,17 +53,25 @@ export const findBacklinkOpportunities = async (niche: string, lang: Language = 
   }
 };
 
-// Generate Keywords (Rank Ninja Logic - Brainstorming)
+/**
+ * RANK NINJA SAB EDITION - Armor Breach Logic
+ */
 export const generateKeywords = async (seedKeyword: string, lang: Language = 'en'): Promise<KeywordIdea[]> => {
   const prompt = `
-    Act as an SEO expert using the "Long Tail" strategy. 
-    Generate 10 high-potential long-tail keywords related to "${seedKeyword}".
-    Focus on keywords that are likely to have lower competition but high conversion intent.
+    Atue como um especialista em SEO de Elite usando a metodologia "SAB (Serp Armor Breaker)". 
+    Gere 10 palavras-chave de cauda longa relacionadas a "${seedKeyword}".
     
+    CRITÉRIOS SAB:
+    1. Foque em termos onde o Top 5 é dominado por fóruns (Reddit/Quora) ou sites de baixa autoridade.
+    2. Identifique "fendas na armadura": termos com alta intenção de busca mas conteúdo pobre nos resultados atuais.
+    3. Priorize palavras de "Volume Zero" que escondem intenção de compra real.
+
     IMPORTANT: Respond in the language code: "${lang}".
 
-    For each keyword, determine its search intent (Informational, Commercial, or Transactional),
-    estimate difficulty (Low, Medium, High), and suggest a specific Content Title idea.
+    Para cada keyword:
+    - Determine o search intent.
+    - Em 'difficulty', descreva a "fenda" encontrada (ex: "Top 3 dominado por fórum").
+    - Sugira um Content Title focado em autoridade semântica.
   `;
 
   try {
@@ -68,6 +79,7 @@ export const generateKeywords = async (seedKeyword: string, lang: Language = 'en
       model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
+        tools: [{googleSearch: {}}], 
         responseMimeType: 'application/json',
         responseSchema: {
           type: Type.ARRAY,
@@ -93,16 +105,20 @@ export const generateKeywords = async (seedKeyword: string, lang: Language = 'en
   }
 };
 
-// Analyze Competitor Gap (Real Search Analysis)
+/**
+ * ARMOR BREACH ANALYSIS - Competitor Gap
+ */
 export const analyzeCompetitorGap = async (competitorUrl: string, topic: string, lang: Language = 'en'): Promise<KeywordIdea[]> => {
   const prompt = `
-    Act as a senior SEO Strategist performing a "Content Gap Analysis".
+    Atue como um Estrategista de SEO Sênior realizando uma "Análise de Fenda na Armadura (Armor Breach Analysis)".
     
-    First, use Google Search to analyze the competitor website: "${competitorUrl}".
-    Understand their content strategy regarding "${topic}".
+    Primeiro, use o Google Search para analisar o site concorrente: "${competitorUrl}".
+    Entenda a estratégia de conteúdo deles sobre "${topic}".
     
-    Then, identify 10 high-value keywords that this competitor likely ranks for, but that represent a "Content Gap" for a new challenger.
-    Focus on "Money Keywords" (Commercial/Transactional) or high-volume Informational keywords.
+    Depois, identifique 10 keywords de alto valor que este concorrente domina, mas que possuem brechas para um novo desafiante:
+    1. Keywords onde o conteúdo do concorrente está desatualizado ou é superficial.
+    2. Termos onde o concorrente rankeia no Top 5, mas o restante do Top 10 é composto por sites fracos (fóruns/fãs).
+    3. Foque em "Money Keywords" onde podemos superar a autoridade dele através de profundidade semântica.
     
     IMPORTANT: Respond in the language code: "${lang}".
     
@@ -123,8 +139,8 @@ export const analyzeCompetitorGap = async (competitorUrl: string, topic: string,
             properties: {
               keyword: { type: Type.STRING },
               intent: { type: Type.STRING, enum: ['Informational', 'Commercial', 'Transactional'] },
-              difficulty: { type: Type.STRING, description: "Estimate difficulty to outrank this competitor" },
-              contentIdea: { type: Type.STRING, description: "A catchy, high-CTR content title (Skyscraper technique) to target this keyword." }
+              difficulty: { type: Type.STRING, description: "Descreva a fraqueza detectada no concorrente para esta keyword" },
+              contentIdea: { type: Type.STRING, description: "Um título Skyscraper superior ao do concorrente" }
             }
           }
         }
@@ -135,4 +151,81 @@ export const analyzeCompetitorGap = async (competitorUrl: string, topic: string,
     if (!text) return [];
     return JSON.parse(text) as KeywordIdea[];
   } catch (error) {
-    console
+    console.error("Gemini API Error (Competitor Gap):", error);
+    return [];
+  }
+};
+
+/**
+ * CONTENT MAGICIAN - Estratégia Semântica
+ */
+export const generateContentStrategy = async (topic: string, mode: string, lang: Language = 'en'): Promise<ContentStrategy> => {
+  const prompt = `
+    Atue como um Especialista em SEO Semântico. Crie uma estratégia imbatível para: "${topic}" usando o modo "${mode}".
+    Siga a Doutrina SAB: foque em cobrir as lacunas que os sites de autoridade deixaram passar.
+    
+    IMPORTANT: Respond in the language code: "${lang}".
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt,
+      config: {
+        tools: [{googleSearch: {}}],
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            title: { type: Type.STRING },
+            targetKeywords: { type: Type.ARRAY, items: { type: Type.STRING } },
+            outline: { type: Type.ARRAY, items: { type: Type.STRING } },
+            hook: { type: Type.STRING, description: "Um gancho irresistível para o primeiro parágrafo" },
+            semanticKeywords: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Termos LSI e Entidades para EEAT" }
+          }
+        }
+      }
+    });
+
+    const text = response.text;
+    return JSON.parse(text) as ContentStrategy;
+  } catch (error) {
+    console.error("Erro no Content Magician:", error);
+    throw error;
+  }
+};
+
+/**
+ * ORÁCULO - Planejamento de 90 dias
+ */
+export const generateGrowthPlan = async (topic: string, lang: Language = 'en'): Promise<any> => {
+  const prompt = `
+    Crie um plano de ataque SEO de 90 dias para o nicho: "${topic}".
+    Use a metodologia SAB (Serp Armor Breaker). Divida em Mês 1 (Fundação), Mês 2 (Brecha) e Mês 3 (Dominação).
+    
+    IMPORTANT: Respond in the language code: "${lang}".
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            month1: { type: Type.STRING },
+            month2: { type: Type.STRING },
+            month3: { type: Type.STRING },
+            priority: { type: Type.STRING, description: "A maior fenda na armadura que deve ser atacada primeiro" }
+          }
+        }
+      }
+    });
+    return JSON.parse(response.text);
+  } catch (error) {
+    console.error("Erro no Oráculo:", error);
+    return null;
+  }
+};
