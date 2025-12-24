@@ -1,134 +1,138 @@
-import { GoogleGenAI } from "@google/genai";
-import { 
-  BacklinkOpportunity, 
-  ContentStrategy, 
-  OutreachTemplate, 
-  KeywordIdea, 
-  Language, 
-  ZeroVolumeAnalysis, 
-  OnPageAnalysis,
-  TrackedSite 
-} from "../types";
+import { GoogleGenAI, Type } from "@google/genai";
+import { BacklinkOpportunity, ContentStrategy, OutreachTemplate, KeywordIdea, Language, ZeroVolumeAnalysis, OnPageAnalysis, TrackedSite } from "../types";
 
-// A chave será puxada das configurações da Vercel/Netlify ou .env local
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// 1. Encontrar Oportunidades de Backlinks (OpportunityFinder.tsx)
+// Analyze a niche to find high-quality backlink candidates (Real Search)
 export const findBacklinkOpportunities = async (niche: string, lang: Language = 'en'): Promise<BacklinkOpportunity[]> => {
-  const prompt = `Analyze the niche "${niche}" in ${lang}. Find 5 REAL high-authority websites for guest posting or skyscraper. JSON: siteName, url, domainAuthority (30-90), relevanceScore (0-100), strategy, contactInfo.`;
+  const prompt = `
+    Use Google Search to analyze the niche "${niche}". Identify 5 REAL, active, high-authority websites, blogs, or digital magazines 
+    that would be excellent targets for White Hat link building (e.g., Guest Posting, Skyscraper technique, Resource pages).
+    
+    IMPORTANT: Respond in the language code: "${lang}".
+    
+    For each site, estimate a Domain Authority (DA) between 30-90 based on their real-world reputation found in search, 
+    a Relevance Score (0-100) to the niche, and suggest a specific strategy to acquire a backlink from them.
+    
+    Provide the output in JSON format.
+  `;
+
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
-      config: { tools: [{googleSearch: {}}], responseMimeType: 'application/json' }
+      config: {
+        tools: [{googleSearch: {}}],
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              siteName: { type: Type.STRING },
+              url: { type: Type.STRING },
+              domainAuthority: { type: Type.NUMBER },
+              relevanceScore: { type: Type.NUMBER },
+              strategy: { type: Type.STRING, description: "Specific tactic like 'Guest Post', 'Broken Link Building', etc." },
+              contactInfo: { type: Type.STRING, description: "Generic contact page or email format suggestion" }
+            }
+          }
+        }
+      }
     });
-    return JSON.parse(response.text || "[]");
-  } catch (error) { return []; }
+
+    const text = response.text;
+    if (!text) return [];
+    return JSON.parse(text) as BacklinkOpportunity[];
+  } catch (error) {
+    console.error("Gemini API Error (Opportunities):", error);
+    return [];
+  }
 };
 
-// 2. Pesquisa de Palavras-chave (KeywordResearcher.tsx)
+// Generate Keywords (Rank Ninja Logic - Brainstorming)
 export const generateKeywords = async (seedKeyword: string, lang: Language = 'en'): Promise<KeywordIdea[]> => {
-  const prompt = `10 long-tail keywords for "${seedKeyword}" in ${lang}. JSON array: keyword, intent (Informational/Commercial/Transactional), difficulty (Low/Medium/High), contentIdea.`;
+  const prompt = `
+    Act as an SEO expert using the "Long Tail" strategy. 
+    Generate 10 high-potential long-tail keywords related to "${seedKeyword}".
+    Focus on keywords that are likely to have lower competition but high conversion intent.
+    
+    IMPORTANT: Respond in the language code: "${lang}".
+
+    For each keyword, determine its search intent (Informational, Commercial, or Transactional),
+    estimate difficulty (Low, Medium, High), and suggest a specific Content Title idea.
+  `;
+
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
-      config: { responseMimeType: 'application/json' }
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              keyword: { type: Type.STRING },
+              intent: { type: Type.STRING, enum: ['Informational', 'Commercial', 'Transactional'] },
+              difficulty: { type: Type.STRING },
+              contentIdea: { type: Type.STRING }
+            }
+          }
+        }
+      }
     });
-    return JSON.parse(response.text || "[]");
-  } catch (error) { return []; }
+
+    const text = response.text;
+    if (!text) return [];
+    return JSON.parse(text) as KeywordIdea[];
+  } catch (error) {
+    console.error("Gemini API Error (Keywords):", error);
+    return [];
+  }
 };
 
-// 3. Gap de Competidores (KeywordResearcher.tsx)
+// Analyze Competitor Gap (Real Search Analysis)
 export const analyzeCompetitorGap = async (competitorUrl: string, topic: string, lang: Language = 'en'): Promise<KeywordIdea[]> => {
-  const prompt = `Analyze ${competitorUrl} for "${topic}" in ${lang}. Find 10 gaps. JSON array: keyword, intent, difficulty, contentIdea.`;
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: prompt,
-      config: { tools: [{googleSearch: {}}], responseMimeType: 'application/json' }
-    });
-    return JSON.parse(response.text || "[]");
-  } catch (error) { return []; }
-};
+  const prompt = `
+    Act as a senior SEO Strategist performing a "Content Gap Analysis".
+    
+    First, use Google Search to analyze the competitor website: "${competitorUrl}".
+    Understand their content strategy regarding "${topic}".
+    
+    Then, identify 10 high-value keywords that this competitor likely ranks for, but that represent a "Content Gap" for a new challenger.
+    Focus on "Money Keywords" (Commercial/Transactional) or high-volume Informational keywords.
+    
+    IMPORTANT: Respond in the language code: "${lang}".
+    
+    Output JSON format matching the schema below.
+  `;
 
-// 4. Estratégia de Conteúdo (ContentMagician.tsx)
-export const generateContentStrategy = async (topic: string, mode: string = 'magnet', lang: Language = 'en'): Promise<ContentStrategy> => {
-  const prompt = `Strategy for "${topic}" (Mode: ${mode}) in ${lang}. JSON: title, type, targetKeywords (array), outline (array), hook, contentBody.`;
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
-      config: { responseMimeType: 'application/json' }
+      config: {
+        tools: [{googleSearch: {}}],
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              keyword: { type: Type.STRING },
+              intent: { type: Type.STRING, enum: ['Informational', 'Commercial', 'Transactional'] },
+              difficulty: { type: Type.STRING, description: "Estimate difficulty to outrank this competitor" },
+              contentIdea: { type: Type.STRING, description: "A catchy, high-CTR content title (Skyscraper technique) to target this keyword." }
+            }
+          }
+        }
+      }
     });
-    return JSON.parse(response.text || "{}");
-  } catch (error) { throw error; }
-};
 
-// 5. E-mail de Outreach (OutreachAssistant.tsx)
-export const generateOutreachEmail = async (targetSite: string, contentTitle: string, strategy: string, lang: Language = 'en'): Promise<OutreachTemplate> => {
-  const prompt = `Outreach email for ${targetSite} about ${contentTitle} using ${strategy} in ${lang}. JSON: subject, body.`;
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: prompt,
-      config: { responseMimeType: 'application/json' }
-    });
-    return JSON.parse(response.text || "{}");
-  } catch (error) { return { subject: "Error", body: "" }; }
-};
-
-// 6. Sugestão de Tópicos (OutreachAssistant.tsx)
-export const generateGuestPostTopics = async (niche: string, lang: Language = 'en'): Promise<string[]> => {
-  const prompt = `5 guest post topics for ${niche} in ${lang}. JSON array of strings.`;
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: prompt,
-      config: { responseMimeType: 'application/json' }
-    });
-    return JSON.parse(response.text || "[]");
-  } catch (error) { return []; }
-};
-
-// 7. KGR - Keyword Golden Ratio (KgrCalculator.tsx)
-export const analyzeZeroVolumeKeyword = async (keyword: string, lang: Language = 'en'): Promise<ZeroVolumeAnalysis> => {
-  const prompt = `Analyze KGR for "${keyword}" in ${lang}. JSON: potentialScore (0-100), verdict (High Potential/Uncertain/Low Potential), reasoning, suggestedVariations (array).`;
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: prompt,
-      config: { responseMimeType: 'application/json' }
-    });
-    return JSON.parse(response.text || "{}");
+    const text = response.text;
+    if (!text) return [];
+    return JSON.parse(text) as KeywordIdea[];
   } catch (error) {
-    return { potentialScore: 0, verdict: 'Uncertain', reasoning: "Error", suggestedVariations: [] };
-  }
-};
-
-// 8. Analisador On-Page (OnPageAnalyzer.tsx)
-export const analyzeOnPageContent = async (title: string, content: string, keyword: string, lang: Language = 'en'): Promise<OnPageAnalysis> => {
-  const prompt = `Analyze SEO for Title: ${title}, Content: ${content}, Keyword: ${keyword} in ${lang}. JSON: score (0-100), keywordDensity, readability, missingElements (array), actionableTips (array).`;
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: prompt,
-      config: { responseMimeType: 'application/json' }
-    });
-    return JSON.parse(response.text || "{}");
-  } catch (error) {
-    return { score: 0, keywordDensity: "0%", readability: "N/A", missingElements: [], actionableTips: [] };
-  }
-};
-
-// 9. Health Check do Domínio (BacklinkTracker.tsx)
-export const analyzeDomainHealth = async (site: TrackedSite, lang: Language = 'en'): Promise<string> => {
-  const prompt = `Analyze domain health for ${site.url} (DR: ${site.dr}, Backlinks: ${site.backlinks}) in ${lang}. Provide a 2-sentence SEO summary.`;
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: prompt
-    });
-    return response.text || "Analysis unavailable.";
-  } catch (error) { return "Error analyzing domain."; }
-};
+    console

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, Telescope, Wand2, SendHorizontal, Menu, X, Target, BookOpen, LineChart, Calculator, Compass, Globe, HelpCircle, ScanSearch, Coins, Bot, Star } from 'lucide-react';
 import { AppView, Language } from './types';
 import { translations } from './utils/translations';
@@ -9,7 +9,7 @@ import OutreachAssistant from './components/OutreachAssistant';
 import KeywordResearcher from './components/KeywordResearcher';
 import SeoAcademy from './components/SeoAcademy';
 import BacklinkTracker from './components/BacklinkTracker';
-import KgrCalculator from './components/KgrCalculator';
+import SerpArmorBreaker from './components/SerpArmorBreaker';
 import StrategyWizard from './components/StrategyWizard';
 import OnboardingTour from './components/OnboardingTour';
 import OnPageAnalyzer from './components/OnPageAnalyzer';
@@ -63,8 +63,8 @@ const App: React.FC = () => {
         return <SeoAcademy lang={language} />;
       case AppView.TRACKING:
         return <BacklinkTracker lang={language} />;
-      case AppView.KGR_CALCULATOR:
-        return <KgrCalculator lang={language} />;
+      case AppView.SERP_ARMOR_BREAK:
+        return <SerpArmorBreaker lang={language} />;
       case AppView.ONPAGE_ANALYZER:
         return <OnPageAnalyzer lang={language} />;
       case AppView.EXTRA_INCOME:
@@ -141,7 +141,7 @@ const App: React.FC = () => {
           <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-4 pt-2">{t.tools}</div>
           <NavItem view={AppView.OPPORTUNITIES} icon={Telescope} label={t.opportunities} />
           <NavItem view={AppView.KEYWORDS} icon={Target} label={t.keywords} />
-          <NavItem view={AppView.KGR_CALCULATOR} icon={Calculator} label={t.kgr} />
+          <NavItem view={AppView.SERP_ARMOR_BREAK} icon={Calculator} label={t.kgr} />
           <NavItem view={AppView.ONPAGE_ANALYZER} icon={ScanSearch} label={t.onpage} />
           <NavItem view={AppView.PROMPT_LIBRARY} icon={Bot} label={t.prompts} />
           <NavItem view={AppView.TRACKING} icon={LineChart} label={t.tracking} />
@@ -206,7 +206,7 @@ const App: React.FC = () => {
                 <NavItem view={AppView.WHY_US} icon={Star} label={t.why_us} />
                 <NavItem view={AppView.OPPORTUNITIES} icon={Telescope} label={t.opportunities} />
                 <NavItem view={AppView.KEYWORDS} icon={Target} label={t.keywords} />
-                <NavItem view={AppView.KGR_CALCULATOR} icon={Calculator} label={t.kgr} />
+                <NavItem view={AppView.SERP-ARMOR-BREAKER} icon={Calculator} label={t.kgr} />
                 <NavItem view={AppView.ONPAGE_ANALYZER} icon={ScanSearch} label={t.onpage} />
                 <NavItem view={AppView.PROMPT_LIBRARY} icon={Bot} label={t.prompts} />
                 <NavItem view={AppView.TRACKING} icon={LineChart} label={t.tracking} />
