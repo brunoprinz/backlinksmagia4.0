@@ -229,3 +229,53 @@ export const generateGrowthPlan = async (topic: string, lang: Language = 'en'): 
     return null;
   }
 };
+
+/**
+ * AUXILIAR - Outreach & Guest Post Topics
+ */
+export const generateOutreachEmail = async (siteUrl: string, strategy: string, lang: Language = 'en'): Promise<OutreachTemplate> => {
+  const prompt = `Crie um email de outreach profissional e persuasivo para o site ${siteUrl} usando a estratégia ${strategy}. Idioma: ${lang}.`;
+  
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            subject: { type: Type.STRING },
+            body: { type: Type.STRING }
+          }
+        }
+      }
+    });
+    return JSON.parse(response.text) as OutreachTemplate;
+  } catch (error) {
+    console.error("Erro no Outreach:", error);
+    return { subject: "Parceria SEO", body: "" };
+  }
+};
+
+export const generateGuestPostTopics = async (niche: string, lang: Language = 'en'): Promise<string[]> => {
+  const prompt = `Gere 5 tópicos virais de guest post para o nicho ${niche}. Idioma: ${lang}.`;
+  
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.ARRAY,
+          items: { type: Type.STRING }
+        }
+      }
+    });
+    return JSON.parse(response.text);
+  } catch (error) {
+    console.error("Erro nos tópicos:", error);
+    return [];
+  }
+};
