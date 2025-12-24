@@ -1,4 +1,4 @@
-﻿import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import { BacklinkOpportunity, ContentStrategy, OutreachTemplate, KeywordIdea, Language, ZeroVolumeAnalysis, OnPageAnalysis, TrackedSite } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -10,19 +10,14 @@ export const findBacklinkOpportunities = async (niche: string, lang: Language = 
   const prompt = `
     Use o Google Search para analisar o nicho "${niche}" sob a ótica da metodologia SAB (Serp Armor Breaker). 
     Identifique 5 sites REAIS, ativos e de autoridade que aceitem parcerias ou guest posts.
-    
     FOCO: Encontre parceiros que permitam criar autoridade para "quebrar" o Top 5 de palavras-chave competitivas.
-    
     IMPORTANT: Respond in the language code: "${lang}".
-    
-    Para cada site, estime o Domain Authority (DA), a relevância e uma estratégia específica (como Skyscraper ou Guest Post).
-    
     Provide the output in JSON format.
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         tools: [{googleSearch: {}}],
@@ -36,8 +31,8 @@ export const findBacklinkOpportunities = async (niche: string, lang: Language = 
               url: { type: Type.STRING },
               domainAuthority: { type: Type.NUMBER },
               relevanceScore: { type: Type.NUMBER },
-              strategy: { type: Type.STRING, description: "Specific tactic like 'Guest Post', 'Broken Link Building', etc." },
-              contactInfo: { type: Type.STRING, description: "Generic contact page or email format suggestion" }
+              strategy: { type: Type.STRING },
+              contactInfo: { type: Type.STRING }
             }
           }
         }
@@ -60,23 +55,12 @@ export const generateKeywords = async (seedKeyword: string, lang: Language = 'en
   const prompt = `
     Atue como um especialista em SEO de Elite usando a metodologia "SAB (Serp Armor Breaker)". 
     Gere 10 palavras-chave de cauda longa relacionadas a "${seedKeyword}".
-    
-    CRITÉRIOS SAB:
-    1. Foque em termos onde o Top 5 é dominado por fóruns (Reddit/Quora) ou sites de baixa autoridade.
-    2. Identifique "fendas na armadura": termos com alta intenção de busca mas conteúdo pobre nos resultados atuais.
-    3. Priorize palavras de "Volume Zero" que escondem intenção de compra real.
-
     IMPORTANT: Respond in the language code: "${lang}".
-
-    Para cada keyword:
-    - Determine o search intent.
-    - Em 'difficulty', descreva a "fenda" encontrada (ex: "Top 3 dominado por fórum").
-    - Sugira um Content Title focado em autoridade semântica.
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         tools: [{googleSearch: {}}], 
@@ -111,23 +95,13 @@ export const generateKeywords = async (seedKeyword: string, lang: Language = 'en
 export const analyzeCompetitorGap = async (competitorUrl: string, topic: string, lang: Language = 'en'): Promise<KeywordIdea[]> => {
   const prompt = `
     Atue como um Estrategista de SEO Sênior realizando uma "Análise de Fenda na Armadura (Armor Breach Analysis)".
-    
-    Primeiro, use o Google Search para analisar o site concorrente: "${competitorUrl}".
-    Entenda a estratégia de conteúdo deles sobre "${topic}".
-    
-    Depois, identifique 10 keywords de alto valor que este concorrente domina, mas que possuem brechas para um novo desafiante:
-    1. Keywords onde o conteúdo do concorrente está desatualizado ou é superficial.
-    2. Termos onde o concorrente rankeia no Top 5, mas o restante do Top 10 é composto por sites fracos (fóruns/fãs).
-    3. Foque em "Money Keywords" onde podemos superar a autoridade dele através de profundidade semântica.
-    
+    Analise o concorrente: "${competitorUrl}" sobre o tópico "${topic}".
     IMPORTANT: Respond in the language code: "${lang}".
-    
-    Output JSON format matching the schema below.
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         tools: [{googleSearch: {}}],
@@ -139,8 +113,8 @@ export const analyzeCompetitorGap = async (competitorUrl: string, topic: string,
             properties: {
               keyword: { type: Type.STRING },
               intent: { type: Type.STRING, enum: ['Informational', 'Commercial', 'Transactional'] },
-              difficulty: { type: Type.STRING, description: "Descreva a fraqueza detectada no concorrente para esta keyword" },
-              contentIdea: { type: Type.STRING, description: "Um título Skyscraper superior ao do concorrente" }
+              difficulty: { type: Type.STRING },
+              contentIdea: { type: Type.STRING }
             }
           }
         }
@@ -160,16 +134,11 @@ export const analyzeCompetitorGap = async (competitorUrl: string, topic: string,
  * CONTENT MAGICIAN - Estratégia Semântica
  */
 export const generateContentStrategy = async (topic: string, mode: string, lang: Language = 'en'): Promise<ContentStrategy> => {
-  const prompt = `
-    Atue como um Especialista em SEO Semântico. Crie uma estratégia imbatível para: "${topic}" usando o modo "${mode}".
-    Siga a Doutrina SAB: foque em cobrir as lacunas que os sites de autoridade deixaram passar.
-    
-    IMPORTANT: Respond in the language code: "${lang}".
-  `;
+  const prompt = `Crie uma estratégia SAB para: "${topic}" no modo "${mode}". Idioma: "${lang}".`;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         tools: [{googleSearch: {}}],
@@ -180,15 +149,13 @@ export const generateContentStrategy = async (topic: string, mode: string, lang:
             title: { type: Type.STRING },
             targetKeywords: { type: Type.ARRAY, items: { type: Type.STRING } },
             outline: { type: Type.ARRAY, items: { type: Type.STRING } },
-            hook: { type: Type.STRING, description: "Um gancho irresistível para o primeiro parágrafo" },
-            semanticKeywords: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Termos LSI e Entidades para EEAT" }
+            hook: { type: Type.STRING }
           }
         }
       }
     });
 
-    const text = response.text;
-    return JSON.parse(text) as ContentStrategy;
+    return JSON.parse(response.text) as ContentStrategy;
   } catch (error) {
     console.error("Erro no Content Magician:", error);
     throw error;
@@ -199,16 +166,11 @@ export const generateContentStrategy = async (topic: string, mode: string, lang:
  * ORÁCULO - Planejamento de 90 dias
  */
 export const generateGrowthPlan = async (topic: string, lang: Language = 'en'): Promise<any> => {
-  const prompt = `
-    Crie um plano de ataque SEO de 90 dias para o nicho: "${topic}".
-    Use a metodologia SAB (Serp Armor Breaker). Divida em Mês 1 (Fundação), Mês 2 (Brecha) e Mês 3 (Dominação).
-    
-    IMPORTANT: Respond in the language code: "${lang}".
-  `;
+  const prompt = `Plano SAB de 90 dias para: "${topic}". Idioma: "${lang}".`;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
@@ -218,7 +180,7 @@ export const generateGrowthPlan = async (topic: string, lang: Language = 'en'): 
             month1: { type: Type.STRING },
             month2: { type: Type.STRING },
             month3: { type: Type.STRING },
-            priority: { type: Type.STRING, description: "A maior fenda na armadura que deve ser atacada primeiro" }
+            priority: { type: Type.STRING }
           }
         }
       }
