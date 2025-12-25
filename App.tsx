@@ -148,13 +148,13 @@ const App: React.FC = () => {
             onChange={(e) => setLanguage(e.target.value as Language)}
             className="bg-slate-900 border border-slate-700 text-slate-300 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-indigo-500 uppercase"
           >
-            <option value="pt-BR">PT-BR</option>
-            <option value="pt-PT">PT-PT</option>
+            <option value="pt">PT</option>
             <option value="en">EN-US</option>
             <option value="es">ES</option>
             <option value="fr">FR</option>
             <option value="it">IT</option>
             <option value="de">DE</option>
+            <option value="pt-pt">PT-PT</option>
           </select>
         </div>
 

@@ -1,6 +1,6 @@
 ﻿import { Language } from '../types';
 
-const en = {
+const en: any = {
   nav: {
     title: "Backlinks Magia 4.0",
     subtitle: "SAB Methodology",
@@ -32,10 +32,20 @@ const en = {
     action_audit: "SAB Oracle",
     action_content: "Create Content",
     action_links: "Opportunities"
-  }
+  },
+  extra: {
+    title: "Freelance Wizard",
+    subtitle: "Monetize your knowledge.",
+    gigs: [{ title: "SAB Audit", price: "$50+", desc: "Sell reports." }],
+    tips: ["Focus on local SEO"],
+    scripts: [{ title: "Script", text: "Hello..." }],
+    btn_yt_seo: "Watch on YT", btn_yt_fiverr: "Fiverr Guide"
+  },
+  academy: { title: "Academy", subtitle: "Learn SAB", courses: [] },
+  keywords: { title: "SAB Research", subtitle: "Find gaps", placeholder: "Keyword...", button: "Analyze" }
 };
 
-const pt = {
+const pt: any = {
   nav: {
     title: "Backlinks Magia",
     subtitle: "v4.0.1 Estável",
@@ -67,10 +77,27 @@ const pt = {
     action_audit: "Oráculo SAB",
     action_content: "Criar Conteúdo",
     action_links: "Oportunidades"
-  }
+  },
+  extra: {
+    title: "Renda Extra SEO",
+    subtitle: "Monetize seu conhecimento.",
+    gigs: [{ title: "Auditoria SAB", price: "R$ 250+", desc: "Venda relatórios." }],
+    tips: ["Foque em negócios locais"],
+    scripts: [{ title: "Script", text: "Olá..." }],
+    btn_yt_seo: "Ver no YT", btn_yt_fiverr: "Guia Fiverr"
+  },
+  academy: { title: "Academy", subtitle: "Aprenda SAB", courses: [] },
+  keywords: { title: "Pesquisa SAB", subtitle: "Encontre fendas", placeholder: "Palavra-chave...", button: "Analisar" }
 };
 
-export const translations: any = { 
-  en, pt, 
-  es: en, fr: en, de: en, it: en, 'pt-pt': pt, zh: en 
+// Mapeamento de exportação seguro
+export const translations: any = {
+  'en': en,
+  'pt': pt,
+  'pt-pt': pt,
+  'es': { ...en, nav: { ...en.nav, title: "Backlinks Magia ES" } },
+  'fr': { ...en, nav: { ...en.nav, title: "Backlinks Magie" } },
+  'it': { ...en, nav: { ...en.nav, title: "Backlinks Magia IT" } },
+  'de': { ...en, nav: { ...en.nav, title: "Backlinks Magie DE" } },
+  'zh': en
 };
