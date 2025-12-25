@@ -12,7 +12,7 @@ const en = {
     wizard: "Strategy Wizard",
     opportunities: "Find Opportunities",
     keywords: "Rank Ninja Keywords",
-    kgr: "KGR & Ghost Keywords",
+    kgr: "Serp Armor Breaker",
     tracking: "Backlink Tracker",
     content: "Content Magician",
     outreach: "Outreach Assistant",
@@ -27,7 +27,7 @@ const en = {
     differentials: [
       { title: "Action Over Data", desc: "Other tools drown you in spreadsheets and metrics. We give you a step-by-step Action Plan. We don't just show data; we tell you exactly what to do with it." },
       { title: "White Hat Automation", desc: "We automate the hard work, not the spam. We use AI to speed up legitimate strategies (like Skyscraper and Outreach), helping you build real authority, not fake links." },
-      { title: "Democratized Strategy", desc: "Advanced concepts like KGR (Keyword Golden Ratio) and Semantic Gaps are usually reserved for expensive agencies. We built them into the core of the tool for everyone." },
+      { title: "Democratized Strategy", desc: "Advanced concepts like SAB (Serp Armor Breaker) and Semantic Gaps are usually reserved for expensive agencies. We built them into the core of the tool for everyone." },
       { title: "Holistic Growth", desc: "We don't separate Content from Backlinks. Our 'Content Magician' builds the asset, and 'Opportunity Finder' gets it seen. It's a complete ecosystem." }
     ],
     warning_title: "⚠️ The Black Hat Danger Zone",
@@ -44,7 +44,7 @@ const en = {
       problem_desc: "\"My site needs popularity to rank on Google, but if it's not popular yet, people won't find it. And without authority, no one wants to link to me naturally. I'm stuck.\"",
       solution_title: "The Magia Solution",
       steps: [
-        { title: "1. Bypass Authority (KGR)", desc: "Use the 'KGR Calculator' to find keywords so specific that you can rank in 24 hours WITHOUT backlinks. This brings your first trickle of traffic immediately." },
+        { title: "1. Bypass Authority (SAB)", desc: "Use the 'Serp Armor Breaker' to find keywords so specific that you can rank in 24 hours WITHOUT backlinks. This brings your first trickle of traffic immediately." },
         { title: "2. Build Assets (Content Magician)", desc: "Don't write blogs; build resources. Use 'Content Magician' to create 'Link Magnets' (data, guides) that are 10x better than competitors. This gives people a REASON to link to you." },
         { title: "3. Force Visibility (Opportunity Finder)", desc: "Don't wait to be found. Use 'Opportunity Finder' to identify sites that cover your topic and use 'Outreach Assistant' to pitch your superior content directly to them." },
         { title: "4. Breaking the Plateau", desc: "Already established? Use 'Rank Ninja' in Competitor Mode to find the exact content gaps stopping your growth and steal your competitor's traffic." }
@@ -87,16 +87,16 @@ const en = {
     ],
     masterclass: {
       kgr: {
-        title: "The KGR Speed Protocol: Ranking in 24 Hours",
+        title: "The SAB Speed Protocol: Ranking in 24 Hours",
         subtitle: "How to bypass the 'Sandbox' and get traffic while others wait months.",
-        hook: "Imagine publishing an article today and seeing it on Google's Page 1 tomorrow. It sounds impossible, but with KGR, it's just math.",
+        hook: "Imagine publishing an article today and seeing it on Google's Page 1 tomorrow. It sounds impossible, but with SAB, it's just math.",
         body: [
           "Most SEOs play a guessing game. They write about 'Best Coffee Maker' and pray. You will play a mathematical game you are destined to win.",
-          "The Keyword Golden Ratio (KGR) finds gaps in the internet so obvious that Google HAS to rank you because there is literally no one else relevant to show.",
-          "I have seen brand new sites rank for KGR terms in less than 24 hours. No backlinks. No authority. Just pure relevance.",
+          "SERP ARMOR BREAKER (SAB) finds gaps in the internet so obvious that Google HAS to rank you because there is literally no one else relevant to show.",
+          "I have seen brand new sites rank for SAB terms in less than 24 hours. No backlinks. No authority. Just pure relevance.",
           "This isn't just about traffic; it's about momentum. Seeing that 'Page 1' ranking gives you the confidence that YOU CAN DO THIS."
         ],
-        action: "Go to the KGR Calculator tool now. Find a keyword with ratio < 0.25. Write a helpful article. Watch the magic happen."
+        action: "Go to the SERP ARMOR BREAKER now. Find a fantastic keyword. Write a helpful article. Watch the magic happen."
       },
       skyscraper: {
         title: "The Skyscraper Technique: Building Monuments",
@@ -182,14 +182,14 @@ const en = {
     subject: "Subject"
   },
   kgr: {
-    title: "KGR & Ghost Keywords",
+    title: "Serp Armor Breaker",
     subtitle: "Find keywords that are literally underserved on the internet.",
-    tab_kgr: "KGR Calculator",
+    tab_kgr: "Serp Armor Breaker",
     tab_zero: "Zero Volume (Ghost)",
     label_keyword: "Target Keyword",
     label_volume: "Search Volume (Max 250)",
     label_allintitle: "Allintitle Results",
-    button: "Calculate KGR",
+    button: "Calculate SAB",
     result_great: "Golden Opportunity!",
     result_good: "Decent Potential",
     result_bad: "Too Competitive",
@@ -229,7 +229,7 @@ const en = {
     steps: [
       { title: "Welcome to Backlinks Magia!", desc: "Your all-in-one White Hat SEO suite. Let's take a quick tour to show you how to dominate the SERPs." },
       { title: "Strategy Wizard", desc: "Feeling lost? Start here. Tell us your current situation (e.g., 'New Project'), and we'll give you a step-by-step action plan." },
-      { title: "Rank Ninja & KGR", desc: "Find low-competition keywords using our advanced algorithms and validate them with the KGR Calculator." },
+      { title: "Rank Ninja & SAB", desc: "Find low-competition keywords using our advanced algorithms and validate them with the Serp Armor Breaker." },
       { title: "Content & Opportunities", desc: "Use 'Content Magician' to generate link-worthy outlines, then find sites to pitch them to with 'Opportunity Finder'." },
       { title: "On-Page Analyzer", desc: "Before publishing, paste your content here to check keyword density and optimization score against your target term." },
       { title: "Backlink Tracker", desc: "Monitor your site's growth. Track active backlinks, domain authority, and relevance score over time." },
@@ -270,7 +270,7 @@ const en = {
     btn_yt_seo: "Get SEO Clients",
     btn_yt_fiverr: "Fiverr Success Tips",
     gigs: [
-      { title: "The 'Golden Ratio' Keyword Report", desc: "Sell a list of 10 keywords with KGR < 0.25.", usp: "USP: Mathematical proof of ranking potential, not just search volume.", tool: "KGR Calculator" },
+      { title: "The Serp Armor Breaker", desc: "Sell a list of 10 fantastic keywords.", usp: "USP: Validated proof of ranking potential, not just search volume.", tool: "Serp Armor Breaker" },
       { title: "Skyscraper Content Blueprint", desc: "Provide a detailed outline to outrank competitors.", usp: "USP: Includes structure, hook, and semantic keywords ready for writers.", tool: "Content Magician" },
       { title: "Competitor Gap Analysis", desc: "Reveal keywords their competitors rank for but they don't.", usp: "USP: 'Money Keywords' that are currently being missed.", tool: "Rank Ninja (Competitor Mode)" },
       { title: "White-Hat Link Prospecting", desc: "A list of 50 high-relevance sites to pitch guest posts to.", usp: "USP: Relevance Score > Domain Authority. Real outreach targets.", tool: "Opportunity Finder" },
@@ -286,7 +286,7 @@ const en = {
       { title: "Low Price Penetration", desc: "Start your first 5 orders at the minimum price ($5/R$20). Your goal is reviews, not profit, initially." },
       { title: "Specific Thumbnails", desc: "Don't use generic stock photos. Use screenshots of the Backlinks Magia tools to prove you have proprietary software/methods." },
       { title: "Response Time", desc: "The algorithm favors users who reply in < 1 hour. Install the mobile app of the freelance platform." },
-      { title: "Long-Tail Gig Titles", desc: "Don't just use 'SEO Service'. Use 'Find 10 KGR Keywords for Pet Stores'. Be specific to reduce competition." }
+      { title: "Long-Tail Gig Titles", desc: "Don't just use 'SEO Service'. Use 'Find SAB Keywords for Pet Stores'. Be specific to reduce competition." }
     ],
     scripts: [
       {
@@ -320,7 +320,7 @@ const pt = {
     wizard: "Mago Estrategista",
     opportunities: "Encontrar Oportunidades",
     keywords: "Palavras-Chave Rank Ninja",
-    kgr: "KGR & Keywords Fantasma",
+    kgr: "Serp Armor Breaker",
     tracking: "Rastreador de Links",
     content: "Mago de Conteúdo",
     outreach: "Assistente de Outreach",
@@ -335,7 +335,7 @@ const pt = {
     differentials: [
       { title: "Ação sobre Dados", desc: "Outras ferramentas te afogam em planilhas e métricas complexas. Nós te damos um Plano de Ação passo a passo. Não apenas mostramos os dados, nós dizemos exatamente o que fazer com eles." },
       { title: "Automação White Hat", desc: "Nós automatizamos o trabalho duro, não o spam. Usamos IA para acelerar estratégias legítimas (como Skyscraper e Outreach), ajudando você a construir autoridade real, não links falsos." },
-      { title: "Estratégia Democratizada", desc: "Conceitos avançados como KGR (Keyword Golden Ratio) e Gaps Semânticos geralmente são reservados para agências caras. Nós os embutimos no núcleo da ferramenta para todos." },
+      { title: "Estratégia Democratizada", desc: "Conceitos avançados como SAB (Serp Armor Breaker) e Gaps Semânticos geralmente são reservados para agências caras. Nós os embutimos no núcleo da ferramenta para todos." },
       { title: "Crescimento Holístico", desc: "Não separamos Conteúdo de Backlinks. O 'Mago de Conteúdo' constrói o ativo, e o 'Explorador de Oportunidades' o divulga. É um ecossistema completo." }
     ],
     warning_title: "⚠️ O Perigo do Black Hat",
@@ -352,7 +352,7 @@ const pt = {
       problem_desc: "\"Meu site precisa de popularidade para crescer no ranking do Google, mas se ele ainda não é popular, ninguém me acha. E se ninguém me acha, ninguém cria links para mim espontaneamente porque não tenho autoridade. Estou travado.\"",
       solution_title: "A Solução Magia",
       steps: [
-        { title: "1. Burlar a Autoridade (KGR)", desc: "Use a 'Calculadora KGR' para achar termos tão específicos que você rankeia em 24h SEM backlinks. Isso traz o primeiro tráfego imediatamente." },
+        { title: "1. Burlar a Autoridade (SAB)", desc: "Use o Serp Armor Breaker' para achar termos tão específicos que você rankeia em 24h SEM backlinks. Isso traz o primeiro tráfego imediatamente." },
         { title: "2. Construir Ativos (Mago de Conteúdo)", desc: "Não escreva blogs; construa recursos. Use o 'Mago de Conteúdo' para criar 'Imãs de Links' (dados, guias) 10x melhores que a concorrência. Isso dá um MOTIVO para linkarem para você." },
         { title: "3. Forçar Visibilidade (Explorador)", desc: "Não espere ser achado. Use o 'Explorador de Oportunidades' para identificar parceiros e o 'Outreach' para apresentar seu conteúdo superior diretamente a eles." },
         { title: "4. Saindo do Platô", desc: "Já é estabelecido? Use o 'Rank Ninja' no modo Competidor para achar os buracos exatos de conteúdo que estão travando seu crescimento e roube o tráfego deles." }
@@ -395,16 +395,16 @@ const pt = {
     ],
     masterclass: {
       kgr: {
-        title: "O Protocolo de Velocidade KGR: Ranqueando em 24 Horas",
+        title: "O Protocolo de Velocidade SAB: Ranqueando em 24 Horas",
         subtitle: "Como furar a fila do 'Sandbox' e obter tráfego enquanto outros esperam meses.",
-        hook: "Imagine publicar um artigo hoje e vê-lo na Página 1 do Google amanhã. Parece impossível, mas com o KGR, é apenas matemática.",
+        hook: "Imagine publicar um artigo hoje e vê-lo na Página 1 do Google amanhã. Parece impossível, mas com o SAB, é apenas matemática.",
         body: [
           "A maioria dos profissionais de SEO joga um jogo de adivinhação. Eles escrevem sobre 'Melhor Cafeteira' e rezam. Você vai jogar um jogo matemático que você está destinado a vencer.",
-          "O Keyword Golden Ratio (KGR) encontra lacunas na internet tão óbvias que o Google TEM que ranquear você porque literalmente não há mais ninguém relevante para mostrar.",
-          "Eu já vi sites novos ranquearem para termos KGR em menos de 24 horas. Sem backlinks. Sem autoridade. Apenas pura relevância.",
+          "O Serp Armor Breaker(SAB) encontra lacunas na internet tão óbvias que o Google TEM que ranquear você porque literalmente não há mais ninguém relevante para mostrar.",
+          "Eu já vi sites novos ranquearem para termos SAB em menos de 24 horas. Sem backlinks. Sem autoridade. Apenas pura relevância.",
           "Isso não é apenas sobre tráfego; é sobre momento. Ver aquele ranking na 'Página 1' te dá a confiança de que VOCÊ PODE FAZER ISSO."
         ],
-        action: "Vá para a ferramenta Calculadora KGR agora. Encontre uma palavra com ratio < 0.25. Escreva um artigo útil. Assista a mágica acontecer."
+        action: "Vá para a ferramenta Calculadora SAB agora. Encontre uma palavra com ratio < 0.25. Escreva um artigo útil. Assista a mágica acontecer."
       },
       skyscraper: {
         title: "A Técnica Arranha-Céu: Construindo Monumentos",
@@ -490,9 +490,9 @@ const pt = {
     subject: "Assunto"
   },
   kgr: {
-    title: "KGR & Keywords Fantasma",
+    title: "Serp Armor Breaker",
     subtitle: "Encontre palavras-chave literalmente mal servidas na internet.",
-    tab_kgr: "Calculadora KGR",
+    tab_kgr: "Serp Armor Breaker",
     tab_zero: "Volume Zero (Fantasma)",
     label_keyword: "Palavra Alvo",
     label_volume: "Volume de Busca (Máx 250)",
@@ -537,7 +537,7 @@ const pt = {
     steps: [
       { title: "Bem-vindo ao Backlinks Magia!", desc: "Sua suíte de SEO White Hat alimentada por IA. Vamos fazer um tour rápido para mostrar como dominar os resultados de busca." },
       { title: "Mago Estrategista", desc: "Sentindo-se perdido? Comece aqui. Diga-nos sua situação atual (ex: 'Novo Projeto') e lhe daremos um plano de ação passo a passo." },
-      { title: "Rank Ninja & KGR", desc: "Encontre palavras-chave de baixa concorrência com 'Rank Ninja' e valide se são fáceis de ranquear usando a 'Calculadora KGR'." },
+      { title: "Rank Ninja & SAB", desc: "Encontre palavras-chave de baixa concorrência com 'Rank Ninja' e valide se são fáceis de ranquear usando a 'Serp Armor Breaker'." },
       { title: "Conteúdo & Oportunidades", desc: "Use o 'Mago de Conteúdo' para gerar esboços dignos de links, depois encontre sites para enviá-los com o 'Explorador de Oportunidades'." },
       { title: "Analisador On-Page", desc: "Antes de publicar, use o 'Analisador On-Page' para garantir que seu conteúdo está perfeitamente otimizado para a palavra-chave." },
       { title: "Rastreador de Backlinks", desc: "Acompanhe o crescimento do seu site com o 'Rastreador', monitorando seus backlinks ativos e evolução da autoridade." },
@@ -578,7 +578,7 @@ const pt = {
     btn_yt_seo: "Conseguir Clientes SEO",
     btn_yt_fiverr: "Dicas de Sucesso no Fiverr",
     gigs: [
-      { title: "Relatório de Palavras 'KGR de Ouro'", desc: "Venda uma lista de 10 palavras-chave com KGR < 0.25.", usp: "Diferencial: Prova matemática de potencial de ranqueamento, não apenas volume.", tool: "Calculadora KGR" },
+      { title: "Relatório de Palavras 'SAB de Ouro'", desc: "Venda uma lista de 10 palavras-chave com SAB.", usp: "Diferencial: Prova matemática de potencial de ranqueamento, não apenas volume.", tool: "Serp Armor Breaker" },
       { title: "Blueprint de Conteúdo Arranha-Céu", desc: "Forneça um esboço detalhado para superar concorrentes.", usp: "Diferencial: Inclui estrutura, gancho e palavras semânticas prontas para redatores.", tool: "Mago de Conteúdo" },
       { title: "Análise de Gap de Competidor", desc: "Revele palavras que os concorrentes ranqueiam e seu cliente não.", usp: "Diferencial: 'Money Keywords' que estão sendo deixadas na mesa.", tool: "Rank Ninja (Modo Competidor)" },
       { title: "Prospecção de Links White-Hat", desc: "Uma lista de 50 sites de alta relevância para Guest Post.", usp: "Diferencial: Relevância > Autoridade. Alvos reais de outreach.", tool: "Explorador de Oportunidades" },
@@ -594,7 +594,7 @@ const pt = {
       { title: "Penetração de Preço Baixo", desc: "Comece seus 5 primeiros pedidos no preço mínimo (R$ 20). Seu objetivo é review, não lucro, inicialmente." },
       { title: "Thumbnails Específicas", desc: "Não use fotos de banco de imagem. Use prints das ferramentas do Backlinks Magia para provar que você tem software/método proprietário." },
       { title: "Tempo de Resposta", desc: "O algoritmo privilegia quem responde em < 1 hora. Instale o app do site de freela no celular." },
-      { title: "Títulos de Cauda Longa", desc: "Não use apenas 'Serviço de SEO'. Use 'Encontro 10 Palavras KGR para Pet Shop'. Seja específico para reduzir competição." }
+      { title: "Títulos de Cauda Longa", desc: "Não use apenas 'Serviço de SEO'. Use 'Encontro 10 Palavras SAB para Pet Shop'. Seja específico para reduzir competição." }
     ],
     scripts: [
       {
@@ -627,7 +627,7 @@ export const translations = {
       differentials: [
         { title: "Ação sobre Dados", desc: "Outras ferramentas afogam-no em folhas de cálculo. Nós damos-lhe um Plano de Ação passo a passo." },
         { title: "Automação White Hat", desc: "Automatizamos o trabalho duro, não o spam. Usamos IA para acelerar estratégias legítimas." },
-        { title: "Estratégia Democratizada", desc: "Conceitos avançados como KGR disponíveis para todos." },
+        { title: "Estratégia Democratizada", desc: "Conceitos avançados como SAB disponíveis para todos." },
         { title: "Crescimento Holístico", desc: "Não separamos Conteúdo de Backlinks. É um ecossistema completo." }
       ],
       warning_title: "⚠️ O Perigo do Black Hat",
@@ -644,7 +644,7 @@ export const translations = {
         problem_desc: "\"O meu site precisa de popularidade para crescer no ranking do Google, mas se ele ainda não é popular, ninguém me encontra. E se ninguém me encontra, ninguém cria links para mim espontaneamente porque não tenho autoridade. Estou bloqueado.\"",
         solution_title: "A Solução Magia",
         steps: [
-          { title: "1. Contornar a Autoridade (KGR)", desc: "Use a 'Calculadora KGR' para encontrar termos tão específicos que rankeia em 24h SEM backlinks. Isso traz o primeiro tráfego imediatamente." },
+          { title: "1. Contornar a Autoridade (SAB)", desc: "Use o Serp Armor Breaker' para encontrar termos tão específicos que rankeia em 24h SEM backlinks. Isso traz o primeiro tráfego imediatamente." },
           { title: "2. Construir Ativos (Mago de Conteúdo)", desc: "Não escreva blogs; construa recursos. Use o 'Mago de Conteúdo' para criar 'Imãs de Links' (dados, guias) 10x melhores que a concorrência. Isso dá um MOTIVO para linkarem para si." },
           { title: "3. Forçar Visibilidade (Explorador)", desc: "Não espere ser encontrado. Use o 'Explorador de Oportunidades' para identificar parceiros e o 'Outreach' para apresentar o seu conteúdo superior diretamente a eles." },
           { title: "4. Saindo do Platô", desc: "Já está estabelecido? Use o 'Rank Ninja' no modo Competidor para encontrar as falhas exatas de conteúdo que estão a impedir o seu crescimento e roube o tráfego deles." }
