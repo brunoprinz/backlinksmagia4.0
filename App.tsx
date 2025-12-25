@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, Telescope, Wand2, SendHorizontal, Menu, X, Target, BookOpen, LineChart, Calculator, Compass, Globe, HelpCircle, ScanSearch, Coins, Bot, Star } from 'lucide-react';
 import { AppView, Language } from './types1';
-import { translations } from './utils/translations1';
+import { translations } from './utils/translations';
 import Dashboard from './components/Dashboard';
 import OpportunityFinder from './components/OpportunityFinder';
 import ContentMagician from './components/ContentMagician';
@@ -215,15 +215,15 @@ const App: React.FC = () => {
                 <NavItem view={AppView.ACADEMY} icon={BookOpen} label={t.academy} />
                 <NavItem view={AppView.EXTRA_INCOME} icon={Coins} label={t.extra} />
                 
-                <div className="pt-4 border-t border-slate-800 mt-4">
-                  <button 
-                    onClick={startTour}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all"
-                  >
-                    <HelpCircle className="w-5 h-5" />
-                    <span className="font-medium">Help Tour</span>
-                  </button>
-                </div>
+                //<div className="pt-4 border-t border-slate-800 mt-4">
+                  //<button 
+                    //onClick={startTour}
+                    //className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all"
+                  //>
+                   // <HelpCircle className="w-5 h-5" />
+                   // <span className="font-medium">Help Tour</span>
+                 // </button>
+                //</div>
             </nav>
           </div>
         )}
