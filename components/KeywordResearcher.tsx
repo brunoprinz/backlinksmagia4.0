@@ -30,7 +30,7 @@ const KeywordResearcher: React.FC<KeywordResearcherProps> = ({ lang, onNavigate 
   const copiarSuperPrompt = () => {
     const nicho = mode === 'discovery' ? seed : competitorTopic;
     const prompt = `Atue como um Especialista em SEO SAB (Serp Armor Breaker).
-Analise o nicho "${nicho || '[DIGITE O NICHO]'}" em ${lang}.
+Analise o nicho "${nicho || '[DIGITE O NICHO]'}".
 Procure por "Fendas na Armadura": palavras-chave onde o Top 5 é dominado por fóruns (Reddit/Quora) ou sites de baixa autoridade.
 FOCO: Keywords de "Volume Zero" com alta intenção de compra.
 

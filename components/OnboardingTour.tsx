@@ -28,7 +28,9 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ lang, isOpen, onClose, 
         case 1: onNavigate(AppView.STRATEGY_WIZARD); break;
         case 2: onNavigate(AppView.KEYWORDS); break; // Onde mora o SAB Analyzer
         case 3: onNavigate(AppView.CONTENT_MAGIC); break;
-        case 4: onNavigate(AppView.ACADEMY); break;
+        case 4: onNavigate(AppView.EXTRA_INCOME); // New: Freelance
+          break;
+        case 5: onNavigate(AppView.ACADEMY); break;
       }
     }
   }, [currentStep, isOpen, onNavigate]);
@@ -55,13 +57,16 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ lang, isOpen, onClose, 
     },
     {
       title: "Magia de Conteúdo",
-      desc: "Transforme brechas em ranking com o Content Magician. Crie artigos semanticamente superiores aos seus rivais.",
+      desc: "Transforme brechas em ranking com o Content Magician. Crie conteúdos semanticamente superiores aos seus rivais.",
       icon: Wand2,
       color: "text-emerald-400"
     },
+    { 
+      title: "Mago Freelancer", desc: "Quer uma renda extra? Use o 'Mago Freelancer' para descobrir como vender serviços de SEO no Fiverr e Upwork usando esta ferramenta." 
+    },
     {
       title: "SAB Masterclass",
-      desc: "Aprenda a nova doutrina na SEO Academy. Descubra o que parou de funcionar e como os profissionais jogam agora.",
+      desc: "Não sabe o que é 'Indexação' ou 'On-Page'? Visite a Academia para dominar os fundamentos SEO antes de ir para campo de ação. Aprenda a nova doutrina na SEO Academy. Descubra o que parou de funcionar e como os profissionais jogam agora.",
       icon: BookOpen,
       color: "text-blue-400"
     }

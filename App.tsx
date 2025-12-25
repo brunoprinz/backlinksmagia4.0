@@ -175,7 +175,7 @@ const App: React.FC = () => {
       {/* Onboarding Tour Component */}
       {showTour && (
         <div className="fixed inset-0 z-[100]">
-          <OnboardingTour lang={language} onClose={() => setShowTour(false)} />
+          <OnboardingTour lang={language} onClose={() => setShowTour(true)} />
         </div>
       )}
     </div>

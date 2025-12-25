@@ -1,49 +1,4 @@
-import { Language } from '../types';
-
-const en: any = {
-  nav: {
-    title: "Backlinks Magia 4.0",
-    subtitle: "SAB Methodology",
-    startHere: "Start Here",
-    why_us: "Why Us?",
-    tools: "War Arsenal",
-    learn: "Learn",
-    dashboard: "Dashboard",
-    wizard: "SAB Oracle - Strategy Wizard",
-    opportunities: "Find Opportunities",
-    keywords: "SAB Research - Rank Ninja",
-    kgr: "Serp Armor Breaker",
-    tracking: "Backlink Tracker",
-    content: "Content Magician",
-    outreach: "Outreach Assistant",
-    onpage: "Audit - On-Page Analyzer",
-    prompts: "Prompts - Vault",
-    extra: "Freelance Wizard ($$)",
-    academy: "SEO Academy"
-  },
-  dashboard: {
-    welcome: "Welcome back",
-    subtitle: "Your command center for search dominance.",
-    stats_da: "Domain Authority",
-    stats_links: "Total Backlinks",
-    stats_growth: "Organic Growth",
-    stats_health: "Profile Health",
-    quick_actions: "Quick Actions",
-    action_audit: "SAB Oracle",
-    action_content: "Create Content",
-    action_links: "Opportunities"
-  },
-  extra: {
-    title: "Freelance Wizard",
-    subtitle: "Monetize your knowledge.",
-    gigs: [{ title: "SAB Audit", price: "$50+", desc: "Sell reports." }],
-    tips: ["Focus on local SEO"],
-    scripts: [{ title: "Script", text: "Hello..." }],
-    btn_yt_seo: "Watch on YT", btn_yt_fiverr: "Fiverr Guide"
-  },
-  academy: { title: "Academy", subtitle: "Learn SAB", courses: [] },
-  keywords: { title: "SAB Research", subtitle: "Find gaps", placeholder: "Keyword...", button: "Analyze" }
-};
+﻿import { Language } from '../types';
 
 const pt: any = {
   nav: {
@@ -78,22 +33,44 @@ const pt: any = {
     action_content: "Criar Conteúdo",
     action_links: "Oportunidades"
   },
+  prompts: {
+    title: "Cofre de Prompts",
+    subtitle: "Prompts de elite para dominar a IA",
+    copy: "Copiar",
+    copied: "Copiado!",
+    placeholder: "Digite seu nicho..."
+  },
+  keywords: {
+    title: "Pesquisa SAB",
+    subtitle: "Encontre fendas na armadura dos concorrentes",
+    placeholder: "Palavra-chave semente...",
+    button: "Analisar"
+  },
+  opportunities: {
+    title: "Oportunidades",
+    subtitle: "Sites reais para prospectar links",
+    placeholder: "Seu nicho...",
+    button: "Buscar"
+  },
   extra: {
     title: "Renda Extra SEO",
     subtitle: "Monetize seu conhecimento.",
-    gigs: [{ title: "Auditoria SAB", price: "R$ 250+", desc: "Venda relatórios." }],
-    tips: ["Foque em negócios locais"],
-    scripts: [{ title: "Script", text: "Olá..." }],
-    btn_yt_seo: "Ver no YT", btn_yt_fiverr: "Guia Fiverr"
+    gigs: [], // Pode deixar vazio se for usar fixo no componente
+    tips: [],
+    scripts: [],
+    btn_yt_seo: "Ver no YT",
+    btn_yt_fiverr: "Guia Fiverr"
   },
-  academy: { title: "Academy", subtitle: "Aprenda SAB", courses: [] },
-  keywords: { title: "Pesquisa SAB", subtitle: "Encontre fendas", placeholder: "Palavra-chave...", button: "Analisar" }
+  tour: {
+    next: "Próximo",
+    skip: "Pular",
+    finish: "Finalizar"
+  }
 };
 
-// Mapeamento de exportação seguro
-
+// Força tudo para Português para evitar erros
 export const translations: any = {
-  en: pt, // <--- Aqui está o truque: 'en' agora aponta para o objeto 'pt'
+  en: pt,
   pt: pt,
   'pt-BR': pt
 };

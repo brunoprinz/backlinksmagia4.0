@@ -17,7 +17,7 @@ const OpportunityFinder: React.FC<OpportunityFinderProps> = ({ lang }) => {
 
   const copiarSuperPrompt = () => {
     const nichoFoco = niche || "[SEU NICHO]";
-    const prompt = `Você é um Especialista em SEO de Elite. Pesquise 8 sites REAIS para o nicho "${nichoFoco}" em ${lang}. 
+    const prompt = `Você é um Especialista em SEO de Elite. Pesquise 8 sites REAIS para o nicho "${nichoFoco}". 
     Divida em: 2 Big Players, 4 Médios e 2 em Ascensão.
     Para cada um, forneça uma estratégia de 3 passos: comentário, compartilhamento e gancho de e-mail.
     RETORNE APENAS JSON:
