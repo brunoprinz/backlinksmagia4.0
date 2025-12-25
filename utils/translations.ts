@@ -106,20 +106,6 @@ const pt: any = {
   academy: { title: "Academy", subtitle: "Aprenda SAB", courses: [] },
   keywords: { title: "Pesquisa SAB", subtitle: "Encontre fendas", placeholder: "Palavra-chave...", button: "Analisar" }
 
-  tour: {
-  next: "Próximo",
-  prev: "Anterior",
-  finish: "Finalizar",
-  skip: "Pular",
-  steps: [
-    { title: "Painel Principal", desc: "Sua central de comando. Monitore seu crescimento e autoridade aqui." },
-    { title: "Oráculo SAB", desc: "O cérebro da operação. Crie estratégias completas usando o método SAB." },
-    { title: "Pesquisa SAB", desc: "Encontre palavras-chave com 'armadura fina' onde você pode ranquear fácil." },
-    { title: "Mago de Conteúdo", desc: "Gere conteúdo de alta autoridade otimizado para suas palavras-chave." },
-    { title: "Guia Freelance", desc: "Aprenda como monetizar suas habilidades de SEO e gerar renda extra." }
-  ]
-}
-
 };
 
 // Mapeamento de exportação seguro
