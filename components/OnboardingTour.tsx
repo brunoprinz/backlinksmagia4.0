@@ -1,7 +1,7 @@
-﻿import React, { useState, useEffect } from 'react';
-import { X, ChevronRight, Wand2, Compass, Target, BookOpen, ScanSearch, LineChart, Coins, Swords, Zap } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, ChevronRight, Wand2, Compass, Target, BookOpen, ScanSearch, LineChart, Coins } from 'lucide-react';
 import { AppView, Language } from '../types';
-import { translations } from '../utils/translations';
+import { translations } from '../utils/translations1';
 
 interface OnboardingTourProps {
   lang: Language;
@@ -20,112 +20,122 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ lang, isOpen, onClose, 
     }
   }, [isOpen]);
 
-  // Sincroniza a navegação do app com os passos do Tour
   useEffect(() => {
+    // Navigate the app in the background to show the relevant section
     if (isOpen) {
       switch (currentStep) {
-        case 0: onNavigate(AppView.DASHBOARD); break;
-        case 1: onNavigate(AppView.STRATEGY_WIZARD); break;
-        case 2: onNavigate(AppView.KEYWORDS); break; // Onde mora o SAB Analyzer
-        case 3: onNavigate(AppView.CONTENT_MAGIC); break;
-        case 4: onNavigate(AppView.EXTRA_INCOME); // New: Freelance
+        case 0:
+          onNavigate(AppView.DASHBOARD);
           break;
-        case 5: onNavigate(AppView.ACADEMY); break;
+        case 1:
+          onNavigate(AppView.STRATEGY_WIZARD);
+          break;
+        case 2:
+          onNavigate(AppView.KEYWORDS); // Show Keywords/KGR context
+          break;
+        case 3:
+          onNavigate(AppView.CONTENT_MAGIC); // Show Content context
+          break;
+        case 4:
+          onNavigate(AppView.ONPAGE_ANALYZER); // New: OnPage
+          break;
+        case 5:
+          onNavigate(AppView.TRACKING); // New: Tracker
+          break;
+        case 6:
+          onNavigate(AppView.EXTRA_INCOME); // New: Freelance
+          break;
+        case 7:
+          onNavigate(AppView.ACADEMY);
+          break;
+        default:
+          break;
       }
     }
   }, [currentStep, isOpen, onNavigate]);
 
-  // Novos passos focados na Metodologia SAB
-  const steps = [
-    {
-      title: "Bem-vindo ao Backlinks Magia 4.0",
-      desc: "Sua central de comando para dominar o Google. Esqueça as métricas de vaidade, aqui focamos em ROI.",
-      icon: Zap,
-      color: "text-yellow-400"
-    },
-    {
-      title: "Mago da Estratégia",
-      desc: "O Oráculo que cria seu plano de ataque de 90 dias baseado no algoritmo Serp Armor Breaker.",
-      icon: Compass,
-      color: "text-indigo-400"
-    },
-    {
-      title: "Serp Armor Breaker (SAB)",
-      desc: "Nossa tecnologia exclusiva que encontra fendas no Top 5. Se o gigante tem uma brecha, o SAB vai te mostrar.",
-      icon: Swords,
-      color: "text-red-400"
-    },
-    {
-      title: "Magia de Conteúdo",
-      desc: "Transforme brechas em ranking com o Content Magician. Crie conteúdos semanticamente superiores aos seus rivais.",
-      icon: Wand2,
-      color: "text-emerald-400"
-    },
-    { 
-      title: "Mago Freelancer", desc: "Quer uma renda extra? Use o 'Mago Freelancer' para descobrir como vender serviços de SEO no Fiverr e Upwork usando esta ferramenta." 
-    },
-    {
-      title: "SAB Masterclass",
-      desc: "Não sabe o que é 'Indexação' ou 'On-Page'? Visite a Academia para dominar os fundamentos SEO antes de ir para campo de ação. Aprenda a nova doutrina na SEO Academy. Descubra o que parou de funcionar e como os profissionais jogam agora.",
-      icon: BookOpen,
-      color: "text-blue-400"
-    }
-  ];
+  if (!isOpen) return null;
 
   const handleNext = () => {
-    if (currentStep < steps.length - 1) {
+    if (currentStep < t.steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      onClose();
+      handleFinish();
     }
   };
 
-  if (!isOpen) return null;
+  const handleFinish = () => {
+    localStorage.setItem('bm_tour_seen', 'true');
+    onNavigate(AppView.DASHBOARD);
+    onClose();
+  };
 
-  const ActiveIcon = steps[currentStep].icon;
+  // Icons corresponding to the 8 steps
+  const icons = [Wand2, Compass, Target, Wand2, ScanSearch, LineChart, Coins, BookOpen];
+  const CurrentIcon = icons[currentStep] || Wand2;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-      <div className="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-300">
-        <div className="p-8 text-center space-y-6">
-          <div className={`w-20 h-20 mx-auto rounded-2xl bg-slate-900 border border-slate-700 flex items-center justify-center ${steps[currentStep].color} shadow-lg shadow-indigo-500/10`}>
-            <ActiveIcon className="w-10 h-10" />
-          </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+      <div className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden relative animate-in zoom-in-95 duration-300">
+        
+        {/* Background Gradients */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
-          <div className="space-y-2">
-            <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">
-              {steps[currentStep].title}
-            </h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              {steps[currentStep].desc}
-            </p>
-          </div>
+        <div className="relative p-8">
+          <button 
+            onClick={handleFinish} 
+            className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+            title={t.skip}
+          >
+            <X className="w-5 h-5" />
+          </button>
 
-          <div className="flex gap-2 justify-center py-2">
-            {steps.map((_, idx) => (
-              <div 
-                key={idx} 
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  idx === currentStep ? 'w-8 bg-indigo-500' : 'w-2 bg-slate-700'
-                }`}
-              />
-            ))}
-          </div>
+          <div className="flex flex-col items-center text-center space-y-6">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+              <CurrentIcon className="w-8 h-8 text-white" />
+            </div>
 
-          <div className="flex gap-3">
-            <button
-              onClick={onClose}
-              className="flex-1 py-3 px-4 rounded-xl border border-slate-700 text-slate-400 font-bold hover:bg-slate-700 hover:text-white transition-all uppercase text-xs tracking-widest"
-            >
-              Pular
-            </button>
-            <button
-              onClick={handleNext}
-              className="flex-[2] py-3 px-4 rounded-xl bg-indigo-600 text-white font-black hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-900/40 flex items-center justify-center gap-2 uppercase text-xs tracking-widest"
-            >
-              {currentStep === steps.length - 1 ? "Entrar na Guerra" : "Próximo"}
-              <ChevronRight className="w-4 h-4" />
-            </button>
+            <div className="space-y-2">
+              <span className="text-xs font-bold uppercase tracking-widest text-indigo-400">
+                {currentStep + 1} / {t.steps.length}
+              </span>
+              <h2 className="text-2xl font-bold text-white">
+                {t.steps[currentStep].title}
+              </h2>
+              <p className="text-slate-300 leading-relaxed">
+                {t.steps[currentStep].desc}
+              </p>
+            </div>
+
+            <div className="flex gap-2 w-full pt-4">
+              <div className="flex-1 flex gap-1 justify-center items-center">
+                {t.steps.map((_, idx) => (
+                  <div 
+                    key={idx} 
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      idx === currentStep ? 'w-8 bg-indigo-500' : 'w-2 bg-slate-700'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="w-full flex gap-3">
+              <button
+                onClick={handleFinish}
+                className="flex-1 py-3 px-4 rounded-xl border border-slate-600 text-slate-300 font-medium hover:bg-slate-700 hover:text-white transition-colors"
+              >
+                {t.skip}
+              </button>
+              <button
+                onClick={handleNext}
+                className="flex-[2] py-3 px-4 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2"
+              >
+                {currentStep === t.steps.length - 1 ? t.finish : t.next}
+                {currentStep !== t.steps.length - 1 && <ChevronRight className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
         </div>
       </div>

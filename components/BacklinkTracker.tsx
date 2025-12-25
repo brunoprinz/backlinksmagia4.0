@@ -2,7 +2,7 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Plus, Trash2, ExternalLink, Link as LinkIcon, TrendingUp, Activity, Download, Gauge, Info, Loader2, Sparkles, Zap, Globe, ArrowRight } from 'lucide-react';
 import { Language, TrackedSite } from '../types';
-import { translations } from '../utils/translations';
+import { translations } from '../utils/translations1';
 
 interface BacklinkTrackerProps {
   lang: Language;

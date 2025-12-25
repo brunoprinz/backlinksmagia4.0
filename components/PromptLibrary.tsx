@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Bot, Copy, Check, Sparkles, BookOpen, List, Target, Zap, AlertTriangle, UserPlus, Users, HelpCircle, TrendingUp, Download } from 'lucide-react';
 import { Language } from '../types';
-import { translations } from '../utils/translations';
+import { translations } from '../utils/translations1';
 
 interface PromptLibraryProps {
   lang: Language;
