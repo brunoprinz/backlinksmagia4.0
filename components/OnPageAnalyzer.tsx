@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ScanSearch, FileText, CheckCircle, AlertCircle, Loader2, Copy, Terminal, Zap, Brain, Target } from 'lucide-react';
+Ôªøimport React, { useState } from 'react';
+import { ScanSearch, FileText, CheckCircle, AlertCircle, Loader2, Copy, Terminal, Zap, Brain, Target, Globe } from 'lucide-react';
 import { Language } from '../types';
 import { translations } from '../utils/translations';
 
@@ -13,114 +13,148 @@ const OnPageStrategist: React.FC<{ lang: Language }> = ({ lang }) => {
   const t = translations[lang].onpage;
 
   const copiarPromptOnPage = () => {
-    const prompt = `VocÍ È um Estrategista de Conte˙do SEO de Elite. 
-Analise o seguinte conte˙do/URL: "${url || 'Conte˙do abaixo'}" para a palavra-chave foco.
+    const prompt = `Voc√™ √© um Estrategista de Conte√∫do SEO de Elite. 
+Analise o seguinte conte√∫do/URL: "${url || 'Conte√∫do abaixo'}" para a palavra-chave foco.
 
-Sua miss„o È realizar uma Auditoria Sem‚ntica 4.0:
-1. INTEN«√O: Qual o formato exato que o Google est· premiando para isso? (Informativo, Transacional, Lista?)
-2. LACUNAS: Quais tÛpicos ou sub-tÛpicos o Top 3 aborda que este conte˙do N√O aborda?
-3. ENTIDADES: Liste 10 palavras-chave sem‚nticas (LSI) que devem estar presentes.
-4. VEREDITO: O que mudar IMEDIATAMENTE para subir posiÁıes?
-
-Conte˙do para analisar: ${content.substring(0, 2000)}
+Sua miss√£o √© realizar uma Auditoria Sem√¢ntica 4.0:
+1. INTEN√á√ÉO: Qual o formato exato que o Google est√° premiando para isso? (Informativo, Transacional, Lista?)
+2. LACUNAS: Quais t√≥picos ou sub-t√≥picos o Top 3 aborda que este conte√∫do N√ÉO aborda?
+3. ENTIDADES: Liste 10 palavras-chave sem√¢nticas (LSI) que devem estar presentes.
+4. VEREDITO: O que mudar IMEDIATAMENTE para subir posi√ß√µes?
 
 RETORNE APENAS JSON:
 {
-  "intent": "...",
-  "score": 85,
-  "missingTopics": ["TÛpico 1", "TÛpico 2"],
-  "semanticTerms": ["Termo 1", "Termo 2"],
+  "score": 0-100,
+  "intentVerdict": "...",
+  "missingTopics": ["...", "..."],
+  "semanticTerms": ["...", "..."],
   "actionPlan": "...",
-  "isOptimized": false
-}`;
+  "readabilityScore": "Boa/M√©dia/Ruim"
+}
+
+Conte√∫do para analisar: ${content.substring(0, 1000) || 'Use a URL fornecida'}`;
+    
     navigator.clipboard.writeText(prompt);
-    alert("Prompt de EstratÈgia On-Page Copiado!");
+    alert("Miss√£o de Auditoria On-Page copiada! Use o Gemini para analisar o conte√∫do.");
   };
 
   const handleManualRender = () => {
     try {
       const data = JSON.parse(manualJson);
       setAnalysis(data);
+      setManualJson('');
     } catch (e) {
-      alert("Erro no JSON. Verifique a cÛpia.");
+      alert("Erro ao ler o JSON. Certifique-se de que o Gemini retornou o formato de objeto correto.");
     }
   };
 
   return (
-    <div className="space-y-6">
-      {/* Painel de Comando */}
-      <div className="bg-slate-800 p-8 rounded-xl border border-purple-500/30 shadow-xl">
-        <div className="flex items-center gap-3 mb-4">
-          <Brain className="w-8 h-8 text-purple-400" />
-          <h2 className="text-2xl font-bold text-white uppercase italic">On-Page Strategist</h2>
-        </div>
-        
-        <div className="space-y-4">
-          <input
-            type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="URL da p·gina (opcional)..."
-            className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-purple-500 outline-none"
-          />
+    <div className="space-y-8">
+      <div className="bg-slate-800/50 p-8 rounded-3xl border border-slate-700 shadow-2xl backdrop-blur-sm">
+        <div className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="relative">
+              <Target className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400" />
+              <input
+                type="text"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="URL da p√°gina (opcional)..."
+                className="w-full bg-slate-900/50 border-2 border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white focus:border-indigo-500 outline-none transition-all"
+              />
+            </div>
+            <div className="relative">
+              <Brain className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400" />
+              <input
+                type="text"
+                placeholder="Palavra-chave Foco..."
+                className="w-full bg-slate-900/50 border-2 border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white focus:border-indigo-500 outline-none transition-all"
+              />
+            </div>
+          </div>
+
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Cole seu texto aqui para uma an·lise profunda..."
-            className="w-full h-32 bg-slate-900 border border-slate-700 rounded-lg p-4 text-white focus:ring-2 focus:ring-purple-500 outline-none"
+            placeholder="Cole o seu conte√∫do aqui para an√°lise sem√¢ntica..."
+            className="w-full h-48 bg-slate-900/50 border-2 border-slate-700 rounded-2xl p-4 text-white focus:border-indigo-500 outline-none transition-all resize-none font-sans"
           />
-          
-          <div className="flex gap-4">
-            <button onClick={copiarPromptOnPage} className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all">
-              <Copy className="w-5 h-5" /> GERAR PROMPT DE AN¡LISE
-            </button>
-          </div>
 
-          <div className="pt-4 border-t border-slate-700">
-            <div className="flex items-center gap-2 text-purple-400 mb-2 text-xs font-bold uppercase tracking-widest">
-              <Terminal className="w-4 h-4" /> Resposta do Or·culo
+          {/* SE√á√ÉO DE COMANDO - ESTILO MARKETPULSE */}
+          <div className="mt-4 pt-6 border-t border-slate-700/50">
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+              <button
+                onClick={copiarPromptOnPage}
+                className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20"
+              >
+                <Copy className="w-5 h-5" /> Copiar Miss√£o de Auditoria
+              </button>
+              
+              <button
+                onClick={() => window.open('https://gemini.google.com/app', '_blank')}
+                className="flex-1 bg-white hover:bg-slate-100 text-slate-900 px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg"
+              >
+                <Terminal className="w-5 h-5 text-indigo-600" /> Abrir Gemini para colar Prompt
+              </button>
             </div>
+
+            <div className="mb-4 p-4 bg-indigo-950/30 border border-indigo-500/20 rounded-lg">
+              <p className="text-indigo-300 text-sm mb-2 font-semibold flex items-center gap-2">
+                <Globe className="w-4 h-4" /> Protocolo de Otimiza√ß√£o:
+              </p>
+              <ul className="text-slate-300 text-xs space-y-1 list-disc ml-4">
+                <li>Copie a <strong>Miss√£o de Auditoria</strong> (inclui o seu texto/URL).</li>
+                <li>No Gemini, cole o comando para iniciar a auditoria sem√¢ntica 4.0.</li>
+                <li>Cole o c√≥digo JSON gerado abaixo para ver os pontos de melhoria.</li>
+              </ul>
+            </div>
+
             <textarea
               value={manualJson}
               onChange={(e) => setManualJson(e.target.value)}
-              placeholder="Cole o JSON de an·lise aqui..."
-              className="w-full h-20 bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-purple-400 font-mono focus:border-purple-500 outline-none"
+              placeholder="Cole o c√≥digo JSON de auditoria aqui..."
+              className="w-full h-32 bg-slate-900 border border-slate-700 rounded-xl p-4 text-emerald-400 font-mono text-sm focus:border-indigo-500 outline-none transition-all"
             />
-            <button onClick={handleManualRender} className="w-full mt-2 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2">
-              <Zap className="w-4 h-4 text-yellow-400" /> RENDERIZAR ESTRAT…GIA
+            
+            <button 
+              onClick={handleManualRender}
+              className="mt-3 w-full bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 border border-emerald-600/50 py-3 rounded-xl text-sm font-bold transition-all uppercase"
+            >
+              Materializar Auditoria Sem√¢ntica
             </button>
           </div>
         </div>
       </div>
 
-      {/* RESULTADOS DA AUDITORIA */}
       {analysis && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-bottom-4">
-          {/* IntenÁ„o e Score */}
-          <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
-            <h3 className="text-slate-400 text-xs font-bold uppercase mb-4 flex items-center gap-2">
-              <Target className="w-4 h-4 text-purple-400" /> IntenÁ„o Detectada
-            </h3>
-            <div className="text-2xl font-bold text-white mb-2">{analysis.intent}</div>
-            <div className="flex items-center gap-2">
-              <div className="flex-1 bg-slate-900 h-2 rounded-full overflow-hidden">
-                <div className="bg-purple-500 h-full" style={{ width: `${analysis.score}%` }}></div>
-              </div>
-              <span className="text-purple-400 font-bold">{analysis.score}%</span>
+        <div className="grid md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="bg-slate-800/50 p-6 rounded-3xl border border-slate-700 col-span-2 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+               <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-3xl font-black text-white border border-indigo-500/30">
+                 {analysis.score}
+               </div>
+               <div>
+                 <h3 className="text-white font-bold">Sa√∫de Sem√¢ntica</h3>
+                 <p className="text-slate-400 text-xs tracking-widest uppercase">An√°lise de IA</p>
+               </div>
+            </div>
+            <div className="text-right">
+              <span className="text-xs font-bold text-slate-500 uppercase block mb-1">Legibilidade</span>
+              <span className="text-emerald-400 font-bold px-3 py-1 bg-emerald-400/10 rounded-full border border-emerald-400/20">
+                {analysis.readabilityScore}
+              </span>
             </div>
           </div>
 
-          {/* Plano de AÁ„o */}
-          <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
-            <h3 className="text-slate-400 text-xs font-bold uppercase mb-4">Plano de AÁ„o Imediato</h3>
+          <div className="bg-slate-800/50 p-6 rounded-3xl border border-slate-700">
+            <h3 className="text-slate-400 text-xs font-bold uppercase mb-4">Plano de A√ß√£o Imediato</h3>
             <p className="text-slate-300 text-sm italic">"{analysis.actionPlan}"</p>
           </div>
 
-          {/* TÛpicos Faltantes */}
-          <div className="bg-slate-900/50 p-6 rounded-xl border border-red-500/20">
-            <h3 className="text-red-400 text-xs font-bold uppercase mb-4">O que o Top 3 tem e vocÍ n„o:</h3>
+          <div className="bg-slate-800/50 p-6 rounded-3xl border border-red-500/20">
+            <h3 className="text-red-400 text-xs font-bold uppercase mb-4">O que o Top 3 tem e voc√™ n√£o:</h3>
             <ul className="space-y-2">
-              {analysis.missingTopics.map((item: string, i: number) => (
+              {analysis.missingTopics?.map((item: string, i: number) => (
                 <li key={i} className="text-sm text-slate-300 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-red-500" /> {item}
                 </li>
@@ -128,13 +162,14 @@ RETORNE APENAS JSON:
             </ul>
           </div>
 
-          {/* Termos Sem‚nticos */}
-          <div className="bg-slate-900/50 p-6 rounded-xl border border-emerald-500/20">
-            <h3 className="text-emerald-400 text-xs font-bold uppercase mb-4">Inclua estas Entidades (LSI):</h3>
+          <div className="bg-slate-800/50 p-6 rounded-3xl border border-emerald-500/20 md:col-span-2">
+            <h3 className="text-emerald-400 text-xs font-bold uppercase mb-4 flex items-center gap-2">
+              <Zap className="w-4 h-4" /> Inclua estas Entidades (LSI) para EEAT:
+            </h3>
             <div className="flex flex-wrap gap-2">
-              {analysis.semanticTerms.map((term: string, i: number) => (
-                <span key={i} className="bg-emerald-500/10 text-emerald-400 text-[10px] px-2 py-1 rounded border border-emerald-500/20 font-bold uppercase">
-                  {term}
+              {analysis.semanticTerms?.map((term: string, i: number) => (
+                <span key={i} className="px-3 py-1.5 bg-slate-900 text-emerald-300 text-xs rounded-lg border border-emerald-500/20 font-medium">
+                  + {term}
                 </span>
               ))}
             </div>

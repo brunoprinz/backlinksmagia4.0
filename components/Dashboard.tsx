@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Link, ShieldCheck, Activity, Wand2, Sparkles, Zap, Search } from 'lucide-react';
 import { Language, AppView } from '../types';

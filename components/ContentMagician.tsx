@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Sparkles, FileText, CheckCircle2, Loader2, Lightbulb, Youtube, BookOpen, ShoppingBag, Copy, Terminal, Zap, Wand2, Type } from 'lucide-react';
+Ôªøimport React, { useState, useEffect } from 'react';
+import { Sparkles, FileText, CheckCircle2, Loader2, Lightbulb, Youtube, BookOpen, ShoppingBag, Copy, Terminal, Zap, Wand2, Type, Globe } from 'lucide-react';
 import { generateContentStrategy } from '../services/geminiService';
 import { ContentStrategy, Language } from '../types';
 import { translations } from '../utils/translations';
@@ -26,147 +26,175 @@ const ContentMagician: React.FC<ContentMagicianProps> = ({ lang }) => {
     }
   }, []);
 
-  // M·gica MarketPulse: Prompt para Conte˙do …pico
+  // M√°gica MarketPulse: Prompt para Conte√∫do √âpico
   const copiarPromptConteudo = () => {
-    if (!topic) { alert("Defina um tÛpico primeiro!"); return; }
+    if (!topic) { alert(lang === 'en' ? "Define a topic first!" : "Defina um t√≥pico primeiro!"); return; }
     
-    const prompt = `VocÍ È um Redator SEO de Elite. 
-TÛpico: "${topic}"
-Formato: "${mode}"
+    const prompt = `Voc√™ √© um Criador de Conte√∫do de Elite.
+Crie uma Estrat√©gia de Conte√∫do SAB para o t√≥pico: "${topic}" em ${lang}.
+O formato deve ser: ${mode}.
 
-Sua miss„o È criar o conte˙do mais completo da internet sobre isso:
-1. Crie um TÌtulo H1 IrresistÌvel.
-2. Estruture em H2 e H3 focando em responder as intenÁıes de busca.
-3. Inclua naturalmente termos sem‚nticos (LSI) relacionados.
-4. Adicione uma seÁ„o de FAQ no final.
+Sua miss√£o:
+1. T√≠tulo Skyscraper que domine o CTR.
+2. Gancho psicol√≥gico (Hook) para os primeiros 15 segundos/par√°grafo.
+3. Outline (Estrutura) com 5 a 8 t√≥picos focando em fendas sem√¢nticas.
+4. Corpo do conte√∫do (resumo) rico em entidades LSI.
 
-SAÕDA OBRIGAT”RIA EM JSON (Para o sistema formatar):
+RETORNE APENAS JSON:
 {
-  "title": "TÌtulo do Post",
-  "targetKeywords": ["KW1", "KW2"],
-  "outline": ["Intro", "TÛpico A", "TÛpico B", "Conclus„o"],
-  "contentBody": "Escreva aqui o texto completo ou o primeiro rascunho..."
+  "title": "...",
+  "type": "${mode}",
+  "targetKeywords": ["...", "..."],
+  "outline": ["...", "..."],
+  "hook": "...",
+  "contentBody": "..."
 }`;
+    
     navigator.clipboard.writeText(prompt);
-    alert("Super Prompt de Conte˙do Copiado!");
+    alert(lang === 'en' ? "Content Mission copied!" : "Miss√£o de Conte√∫do copiada! Use o Gemini para gerar a m√°gica.");
   };
 
   const handleManualRender = () => {
     try {
       const data = JSON.parse(manualJson);
-      setStrategy({
-        title: data.title,
-        targetKeywords: data.targetKeywords,
-        outline: data.outline,
-        contentBody: data.contentBody,
-        angle: "An·lise IA"
-      });
+      setStrategy(data);
+      setManualJson('');
     } catch (e) {
-      alert("Erro no JSON. Verifique se o Gemini fechou todas as chaves { }.");
+      alert(lang === 'en' ? "Invalid JSON format." : "Formato JSON inv√°lido. Verifique o c√≥digo gerado pelo Gemini.");
     }
   };
 
-  const handleGenerate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleMagicSearch = async () => {
     if (!topic) return;
     setLoading(true);
-    setStrategy(null);
-    const result = await generateContentStrategy(topic, mode, lang);
-    setStrategy(result);
-    setLoading(false);
+    try {
+      const result = await generateContentStrategy(topic, lang);
+      setStrategy(result);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return (
-    <div className="space-y-6">
-      {/* PAINEL DE CRIA«√O */}
-      <div className="bg-slate-800 p-8 rounded-xl border border-emerald-500/30 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-4 opacity-10 rotate-12">
-          <Wand2 className="w-24 h-24 text-emerald-400" />
-        </div>
+  const modes: { id: ContentMode; label: string; icon: any; color: string }[] = [
+    { id: 'magnet', label: 'Lead Magnet', icon: Sparkles, color: 'indigo' },
+    { id: 'review', label: 'Product Review', icon: ShoppingBag, color: 'emerald' },
+    { id: 'video', label: 'Video Script', icon: Youtube, color: 'red' },
+    { id: 'ebook', label: 'Ebook Outline', icon: BookOpen, color: 'amber' },
+  ];
 
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-6">
-            <Sparkles className="w-8 h-8 text-emerald-400" />
-            <h2 className="text-2xl font-bold text-white uppercase italic">Mago do Conte˙do</h2>
+  return (
+    <div className="space-y-8">
+      <div className="bg-slate-800/50 p-8 rounded-3xl border border-slate-700 shadow-2xl backdrop-blur-sm">
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {modes.map((m) => {
+              const Icon = m.icon;
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => setMode(m.id)}
+                  className={`p-4 rounded-2xl border transition-all flex flex-col items-center gap-3 font-bold text-xs uppercase tracking-widest ${mode === m.id ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-lg' : 'bg-slate-900/50 border-slate-800 text-slate-500 hover:text-slate-300'}`}
+                >
+                  <Icon className={`w-6 h-6 ${mode === m.id ? 'text-indigo-400' : 'text-slate-600'}`} />
+                  {m.label}
+                </button>
+              );
+            })}
           </div>
 
-          <form onSubmit={handleGenerate} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <button type="button" onClick={() => setMode('magnet')} className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${mode === 'magnet' ? 'bg-emerald-600 border-emerald-400 text-white' : 'bg-slate-900 border-slate-700 text-slate-400 hover:border-slate-500'}`}>
-                <FileText className="w-6 h-6" /> <span className="text-xs font-bold uppercase">Blog Post</span>
+          <div className="relative">
+            <Wand2 className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400" />
+            <input
+              type="text"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              placeholder={lang === 'en' ? "Topic or keyword for your content..." : "T√≥pico ou palavra-chave para seu conte√∫do..."}
+              className="w-full bg-slate-900/50 border-2 border-slate-700 rounded-2xl py-5 pl-12 pr-4 text-white focus:border-indigo-500 outline-none transition-all text-lg shadow-inner"
+            />
+          </div>
+
+          <button
+            onClick={handleMagicSearch}
+            disabled={loading || !topic}
+            className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98]"
+          >
+            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Sparkles className="w-6 h-6" />}
+            {lang === 'en' ? "Manifest Content Strategy" : "Manifestar Estrat√©gia de Conte√∫do"}
+          </button>
+
+          {/* SE√á√ÉO DE COMANDO - ESTILO MARKETPULSE */}
+          <div className="mt-8 pt-8 border-t border-slate-700/50">
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+              <button
+                onClick={copiarPromptConteudo}
+                className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20"
+              >
+                <Copy className="w-5 h-5" /> {lang === 'en' ? "Copy Content Mission" : "Copiar Miss√£o de Conte√∫do"}
               </button>
-              <button type="button" onClick={() => setMode('review')} className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${mode === 'review' ? 'bg-blue-600 border-blue-400 text-white' : 'bg-slate-900 border-slate-700 text-slate-400 hover:border-slate-500'}`}>
-                <ShoppingBag className="w-6 h-6" /> <span className="text-xs font-bold uppercase">Review</span>
-              </button>
-              <button type="button" onClick={() => setMode('video')} className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${mode === 'video' ? 'bg-red-600 border-red-400 text-white' : 'bg-slate-900 border-slate-700 text-slate-400 hover:border-slate-500'}`}>
-                <Youtube className="w-6 h-6" /> <span className="text-xs font-bold uppercase">Roteiro</span>
-              </button>
-              <button type="button" onClick={() => setMode('ebook')} className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${mode === 'ebook' ? 'bg-purple-600 border-purple-400 text-white' : 'bg-slate-900 border-slate-700 text-slate-400 hover:border-slate-500'}`}>
-                <BookOpen className="w-6 h-6" /> <span className="text-xs font-bold uppercase">Ebook</span>
+              
+              <button
+                onClick={() => window.open('https://gemini.google.com/app', '_blank')}
+                className="flex-1 bg-white hover:bg-slate-100 text-slate-900 px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg"
+              >
+                <Terminal className="w-5 h-5 text-indigo-600" /> {lang === 'en' ? "Open Gemini" : "Abrir Gemini para Colar"}
               </button>
             </div>
 
-            <div className="flex gap-4">
-              <input
-                type="text"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                placeholder="Sobre o que vamos escrever hoje?"
-                className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
-              />
-              <button type="button" onClick={copiarPromptConteudo} className="bg-slate-700 hover:bg-slate-600 text-white px-6 rounded-lg font-bold flex items-center gap-2">
-                <Copy className="w-5 h-5" /> PROMPT
-              </button>
-              <button type="submit" disabled={loading} className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 rounded-lg font-bold flex items-center gap-2 disabled:opacity-50">
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
-                {loading ? 'CONJURANDO...' : 'CRIAR'}
-              </button>
+            <div className="mb-4 p-4 bg-indigo-950/30 border border-indigo-500/20 rounded-lg">
+              <p className="text-indigo-300 text-sm mb-2 font-semibold flex items-center gap-2">
+                <Globe className="w-4 h-4" /> {lang === 'en' ? "Epic Content Protocol:" : "Protocolo de Conte√∫do √âpico:"}
+              </p>
+              <ul className="text-slate-300 text-xs space-y-1 list-disc ml-4">
+                <li>{lang === 'en' ? "Copy the specific mission for your content type." : "Copie a miss√£o espec√≠fica para seu tipo de conte√∫do."}</li>
+                <li>{lang === 'en' ? "Paste it in Gemini to get a full semantic structure." : "Cole no Gemini para obter uma estrutura sem√¢ntica completa."}</li>
+                <li>{lang === 'en' ? "Paste the generated JSON below to visualize your draft." : "Cole o JSON gerado abaixo para visualizar seu rascunho."}</li>
+              </ul>
             </div>
-          </form>
 
-          {/* MODO OR¡CULO PARA CONTE⁄DO LONGO */}
-          <div className="mt-8 pt-6 border-t border-white/10">
-            <div className="flex items-center gap-2 text-emerald-400 mb-3 text-sm font-bold uppercase tracking-widest">
-              <Terminal className="w-4 h-4" /> Pergaminho do Or·culo (Cole o JSON)
-            </div>
             <textarea
               value={manualJson}
               onChange={(e) => setManualJson(e.target.value)}
-              placeholder="Cole o JSON com o conte˙do completo aqui..."
-              className="w-full h-24 bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-emerald-400 font-mono focus:border-emerald-500 outline-none"
+              placeholder='{ "title": "...", "outline": [...] }'
+              className="w-full h-32 bg-slate-900 border border-slate-700 rounded-xl p-4 text-emerald-400 font-mono text-sm focus:border-indigo-500 outline-none transition-all"
             />
-            <button onClick={handleManualRender} className="mt-2 w-full bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 border border-emerald-600/50 py-2 rounded-lg text-sm font-bold transition-all">
-              FORMATAR CONTE⁄DO M¡GICO
+            
+            <button 
+              onClick={handleManualRender}
+              className="mt-3 w-full bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 border border-emerald-600/50 py-3 rounded-xl text-sm font-bold transition-all uppercase"
+            >
+              {lang === 'en' ? "Materialize Magic Draft" : "Materializar Rascunho M√°gico"}
             </button>
           </div>
         </div>
       </div>
 
-      {/* RESULTADO DA M¡GICA */}
       {strategy && (
-        <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden animate-in zoom-in duration-300">
-          <div className="p-8 border-b border-slate-700">
-            <h3 className="text-3xl font-black text-white mb-4 italic tracking-tight underline decoration-emerald-500 decoration-4 underline-offset-8">
-              {strategy.title}
-            </h3>
-            <div className="flex flex-wrap gap-2 mb-6">
-              {strategy.targetKeywords.map((kw, idx) => (
-                <span key={idx} className="px-3 py-1 bg-emerald-900/30 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-bold">
-                  #{kw}
-                </span>
-              ))}
+        <div className="bg-slate-800/50 rounded-3xl border border-slate-700 overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-8">
+            <div className="flex justify-between items-start mb-4">
+              <span className="bg-white/20 backdrop-blur-md text-white px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/20">
+                {strategy.type} 4.0
+              </span>
+              <div className="flex gap-2">
+                {strategy.targetKeywords.map((kw, i) => (
+                  <span key={i} className="text-indigo-200 text-xs">#{kw}</span>
+                ))}
+              </div>
             </div>
+            <h2 className="text-3xl font-black text-white leading-tight">{strategy.title}</h2>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-slate-700">
+          <div className="grid lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-slate-700">
             <div className="p-8 lg:col-span-1 bg-slate-900/30">
-              <h4 className="text-slate-400 font-bold uppercase text-xs mb-4 flex items-center gap-2">
-                <Lightbulb className="w-4 h-4 text-yellow-400" /> Estrutura Sugerida (H2/H3)
+              <h4 className="text-slate-400 font-bold uppercase text-xs mb-6 flex items-center gap-2">
+                <Lightbulb className="w-4 h-4 text-yellow-400" /> {lang === 'en' ? "Structure (H2/H3)" : "Estrutura (H2/H3)"}
               </h4>
               <ul className="space-y-4">
                 {strategy.outline.map((item, idx) => (
                   <li key={idx} className="flex items-start gap-3 text-slate-300 text-sm">
-                    <span className="w-5 h-5 rounded-full bg-slate-800 text-emerald-400 flex items-center justify-center text-[10px] font-bold border border-slate-700 shrink-0">
+                    <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-[10px] font-bold border border-indigo-500/30 shrink-0 mt-0.5">
                       {idx + 1}
                     </span>
                     {item}
@@ -175,14 +203,19 @@ SAÕDA OBRIGAT”RIA EM JSON (Para o sistema formatar):
               </ul>
             </div>
             
-            <div className="p-8 lg:col-span-2">
+            <div className="p-8 lg:col-span-2 bg-slate-800/20">
+              <div className="mb-8 p-6 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl">
+                <h4 className="text-indigo-400 font-bold uppercase text-xs mb-3 flex items-center gap-2">
+                  <Zap className="w-4 h-4" /> {lang === 'en' ? "The Hook (Opening)" : "O Gancho (Abertura)"}
+                </h4>
+                <p className="text-slate-300 text-lg italic leading-relaxed">"{strategy.hook}"</p>
+              </div>
+
               <h4 className="text-slate-400 font-bold uppercase text-xs mb-4 flex items-center gap-2">
-                <Type className="w-4 h-4 text-emerald-400" /> Rascunho do Conte˙do
+                <Type className="w-4 h-4 text-emerald-400" /> {lang === 'en' ? "Content Draft" : "Rascunho do Conte√∫do"}
               </h4>
-              <div className="prose prose-invert max-w-none">
-                <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">
-                  {strategy.contentBody}
-                </p>
+              <div className="prose prose-invert max-w-none text-slate-300 leading-relaxed">
+                {strategy.contentBody || (lang === 'en' ? "Generate to see the full draft..." : "Gere para ver o rascunho completo...")}
               </div>
             </div>
           </div>

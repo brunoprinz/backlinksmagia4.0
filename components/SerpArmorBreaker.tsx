@@ -1,8 +1,7 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   ShieldAlert, Radar, Target, Info, CheckCircle, XCircle, 
-  AlertTriangle, Download, Trash2, History, Search, 
-  ArrowUp, ArrowDown, ArrowUpDown, Loader2, Copy, Terminal, Zap
+  AlertTriangle, Search, Loader2, Copy, Terminal, Zap, Globe, BarChart3
 } from 'lucide-react';
 import { Language } from '../types';
 import { translations } from '../utils/translations';
@@ -11,7 +10,7 @@ import { translations } from '../utils/translations';
 interface SABResult {
   isWinner: boolean;
   weakSpots: number;
-  score: number; // 0 a 100
+  score: number;
   analysis: string;
   competitors: Array<{
     pos: number;
@@ -33,172 +32,162 @@ const SerpArmorBreaker: React.FC<KgrCalculatorProps> = ({ lang }) => {
   const [sabResult, setSabResult] = useState<SABResult | null>(null);
   const t = translations[lang].kgr || { title: "SERP Armor Breaker", subtitle: "Encontre as fendas na armadura dos gigantes" };
 
-  // O "Pulo do Gato": Super Prompt focado no Método Steve (Top 5 Fraco)
-  const copiarPromptSAB = () => {
-    if (!keyword) { alert("Digite uma palavra-chave primeiro!"); return; }
-    
-    const prompt = `Atue como um Especialista em Inteligência de Busca. 
-Analise a SERP Real (Top 10) para a palavra-chave: "${keyword}" em ${lang}.
-
-CRITÉRIOS DE FRAQUEZA (Método Steve):
-1. Site com DA (Domain Authority) < 25.
-2. Presença de Fóruns (Reddit, Quora, Yahoo, etc).
-3. Posts de Redes Sociais ou Vídeos do YouTube (quando a busca pede texto).
-4. Domínios de nicho pequeno ou blogs amadores.
-
-MISSÃO: 
-Identifique quantos desses "Resultados Fracos" existem especificamente no TOP 5. 
-Se houver 3 ou mais no Top 5, é um "SAB WINNER" (80% de chance de rankear sem backlinks).
+  const copiarSuperPrompt = () => {
+    const kw = keyword || "[SUA PALAVRA-CHAVE]";
+    const prompt = `Analise a SERP (resultados de busca) para a keyword: "${kw}" em ${lang}.
+Identifique se existem "Fendas na Armadura" (Armor Breaches) no Top 10.
+Considere fendas: Fóruns (Reddit/Quora), sites com DA baixo (<20), ou conteúdos mal formatados.
 
 RETORNE APENAS JSON:
 {
-  "keyword": "${keyword}",
-  "isWinner": true,
-  "weakSpots": 3,
+  "isWinner": true/false,
+  "weakSpots": 0,
   "score": 85,
-  "analysis": "Explicação curta de por que é fácil ou difícil.",
+  "analysis": "Resumo estratégico da oportunidade...",
   "competitors": [
-    { "pos": 1, "site": "Exemplo.com", "da": 15, "isWeak": true, "type": "Fórum" }
+    {"pos": 1, "site": "Exemplo.com", "da": 45, "isWeak": false, "type": "Autoridade"},
+    {"pos": 2, "site": "Reddit.com", "da": 90, "isWeak": true, "type": "Fórum"}
   ]
 }`;
     navigator.clipboard.writeText(prompt);
-    alert("Prompt SAB Copiado! O Oráculo está pronto.");
+    alert("Missão de Análise de SERP copiada! Use o Gemini para encontrar as fendas.");
   };
 
   const handleManualRender = () => {
     try {
       const data = JSON.parse(manualJson);
       setSabResult(data);
+      setManualJson('');
     } catch (e) {
-      alert("Erro no JSON. Verifique se copiou o código completo do Gemini.");
+      alert("Erro ao ler o JSON. Certifique-se de copiar o bloco { ... } completo.");
     }
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header Estilo Radar */}
-      <div className="bg-slate-800 p-8 rounded-xl border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.1)] relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-4 opacity-10">
-          <Radar className="w-24 h-24 text-emerald-500 animate-pulse" />
-        </div>
-        
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <Target className="w-8 h-8 text-emerald-400" />
-            <h2 className="text-2xl font-bold text-white uppercase tracking-tighter italic">
-              SERP Armor Breaker <span className="text-emerald-500">v4.0</span>
-            </h2>
+    <div className="space-y-8">
+      <div className="bg-slate-800/50 p-8 rounded-3xl border border-slate-700 shadow-2xl backdrop-blur-sm">
+        <div className="flex flex-col gap-6">
+          <div className="relative group">
+            <Radar className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 group-focus-within:text-indigo-300 transition-colors" />
+            <input
+              type="text"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              placeholder="Digite a palavra-chave para analisar a SERP..."
+              className="w-full bg-slate-900/50 border-2 border-slate-700 rounded-2xl py-5 pl-12 pr-4 text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition-all text-lg"
+            />
           </div>
-          <p className="text-slate-400 mb-6 max-w-xl">
-            Baseado no Método Steve: Identificando fraquezas estruturais no Top 5 para ranquear sem gastar com backlinks.
-          </p>
 
-          <div className="space-y-4">
-            <div className="flex gap-4">
-              <input
-                type="text"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                placeholder="Insira a palavra-chave de destino..."
-                className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
-              />
-              <button 
-                onClick={copiarPromptSAB}
-                className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2 shadow-lg shadow-emerald-900/20"
+          {/* SEÇÃO DE COMANDO - ESTILO MARKETPULSE */}
+          <div className="mt-4 pt-6 border-t border-slate-700/50">
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+              <button
+                onClick={copiarSuperPrompt}
+                className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20"
               >
-                <Copy className="w-5 h-5" /> COPIAR MISSÃO
+                <Copy className="w-5 h-5" /> Copiar Missão de Análise
+              </button>
+              
+              <button
+                onClick={() => window.open('https://gemini.google.com/app', '_blank')}
+                className="flex-1 bg-white hover:bg-slate-100 text-slate-900 px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg"
+              >
+                <Terminal className="w-5 h-5 text-indigo-600" /> Abrir Gemini para colar Prompt
               </button>
             </div>
 
-            <div className="pt-4 border-t border-slate-700/50">
-              <div className="flex items-center gap-2 text-emerald-400 mb-2 text-xs font-bold uppercase">
-                <Terminal className="w-4 h-4" /> Relatório do Oráculo
-              </div>
-              <textarea
-                value={manualJson}
-                onChange={(e) => setManualJson(e.target.value)}
-                placeholder="Cole o JSON retornado pelo Gemini aqui..."
-                className="w-full h-20 bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-emerald-500 font-mono focus:border-emerald-500 outline-none"
-              />
-              <button 
-                onClick={handleManualRender}
-                className="w-full mt-2 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2"
-              >
-                <Zap className="w-4 h-4 text-yellow-400" /> PROCESSAR ARMOR BREAKER
-              </button>
+            <div className="mb-4 p-4 bg-indigo-950/30 border border-indigo-500/20 rounded-lg">
+              <p className="text-indigo-300 text-sm mb-2 font-semibold flex items-center gap-2">
+                <Globe className="w-4 h-4" /> Protocolo de Varredura:
+              </p>
+              <ul className="text-slate-300 text-xs space-y-1 list-disc ml-4">
+                <li>Copie a <strong>Missão de Análise</strong> e abra a IA no botão acima.</li>
+                <li>O Gemini usará o Google Search para mapear a força dos concorrentes.</li>
+                <li>Cole o código JSON gerado abaixo para visualizar o mapa de vulnerabilidades.</li>
+              </ul>
             </div>
+
+            <textarea
+              value={manualJson}
+              onChange={(e) => setManualJson(e.target.value)}
+              placeholder="Cole o código JSON { 'isWinner': ... } aqui..."
+              className="w-full h-32 bg-slate-900 border border-slate-700 rounded-xl p-4 text-emerald-400 font-mono text-sm focus:border-indigo-500 outline-none transition-all"
+            />
+            
+            <button 
+              onClick={handleManualRender}
+              className="mt-3 w-full bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 border border-emerald-600/50 py-3 rounded-xl text-sm font-bold transition-all uppercase tracking-widest"
+            >
+              Materializar Varredura de SERP
+            </button>
           </div>
         </div>
       </div>
 
-      {/* RESULTADO ESTILO RAIO-X */}
       {sabResult && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in zoom-in duration-300">
-          {/* Card de Veredito */}
-          <div className={`p-6 rounded-xl border ${sabResult.isWinner ? 'bg-emerald-900/20 border-emerald-500' : 'bg-red-900/20 border-red-500'}`}>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Status da Missão</span>
-              {sabResult.isWinner ? <CheckCircle className="text-emerald-500" /> : <ShieldAlert className="text-red-500" />}
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-slate-800/50 p-6 rounded-3xl border border-slate-700 text-center">
+              <div className="text-4xl font-black text-white mb-1">{sabResult.score}</div>
+              <div className="text-xs text-slate-400 uppercase tracking-widest">SAB Score</div>
             </div>
-            <div className="text-4xl font-black text-white mb-2">
-              {sabResult.isWinner ? 'WINNER' : 'RISKY'}
+            <div className="bg-slate-800/50 p-6 rounded-3xl border border-slate-700 text-center">
+              <div className="text-4xl font-black text-emerald-400 mb-1">{sabResult.weakSpots}</div>
+              <div className="text-xs text-slate-400 uppercase tracking-widest">Fendas Encontradas</div>
             </div>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              {sabResult.analysis}
-            </p>
-          </div>
-
-          {/* Card de Métricas SAB */}
-          <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 flex flex-col justify-center items-center text-center">
-            <div className="text-5xl font-black text-emerald-400 mb-1">{sabResult.weakSpots}/5</div>
-            <div className="text-xs font-bold text-slate-500 uppercase">Fraquezas no Top 5</div>
-            <div className="w-full bg-slate-900 h-2 rounded-full mt-4 overflow-hidden">
-              <div 
-                className="h-full bg-emerald-500" 
-                style={{ width: `${(sabResult.weakSpots / 5) * 100}%` }}
-              ></div>
+            <div className="bg-slate-800/50 p-6 rounded-3xl border border-slate-700 text-center flex items-center justify-center">
+              {sabResult.isWinner ? (
+                <div className="flex items-center gap-2 text-emerald-400 font-bold">
+                  <CheckCircle className="w-6 h-6" /> Oportunidade Real
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-amber-400 font-bold">
+                  <ShieldAlert className="w-6 h-6" /> SERP Blindada
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Card de Score */}
-          <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 flex flex-col justify-center items-center text-center">
-            <div className="text-5xl font-black text-white mb-1">{sabResult.score}</div>
-            <div className="text-xs font-bold text-slate-500 uppercase">SAB Difficulty Score</div>
-            <div className="text-[10px] text-slate-400 mt-2 italic">Quanto maior, mais fácil penetrar.</div>
-          </div>
-
-          {/* Tabela de Invasão da SERP */}
-          <div className="md:col-span-3 bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="bg-slate-800 text-xs font-bold text-slate-400 uppercase">
-                  <th className="px-6 py-3">Posição</th>
-                  <th className="px-6 py-3">Competidor</th>
-                  <th className="px-6 py-3">DA Est.</th>
-                  <th className="px-6 py-3">Vulnerabilidade</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800">
-                {sabResult.competitors.map((comp, i) => (
-                  <tr key={i} className={comp.isWeak ? 'bg-emerald-500/5' : ''}>
-                    <td className="px-6 py-4 font-bold text-slate-500">#{comp.pos}</td>
-                    <td className="px-6 py-4 text-white text-sm">{comp.site}</td>
-                    <td className="px-6 py-4 text-sm font-mono">{comp.da}</td>
-                    <td className="px-6 py-4">
-                      {comp.isWeak ? (
-                        <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded-full font-bold uppercase">
-                          BRECHA: {comp.type}
-                        </span>
-                      ) : (
-                        <span className="text-[10px] bg-slate-700 text-slate-400 px-2 py-1 rounded-full font-bold uppercase">
-                          Blindado
-                        </span>
-                      )}
-                    </td>
+          <div className="bg-slate-800/50 rounded-3xl border border-slate-700 overflow-hidden">
+            <div className="p-6 border-b border-slate-700">
+              <h3 className="text-white font-bold flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-indigo-400" /> Mapa Detalhado da SERP
+              </h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-900/50 text-slate-400 text-xs uppercase tracking-widest font-bold">
+                    <th className="px-6 py-4">Posição</th>
+                    <th className="px-6 py-4">Competidor</th>
+                    <th className="px-6 py-4">DA Est.</th>
+                    <th className="px-6 py-4">Status da Armadura</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {sabResult.competitors.map((comp, i) => (
+                    <tr key={i} className={`hover:bg-slate-700/20 transition-colors ${comp.isWeak ? 'bg-emerald-500/5' : ''}`}>
+                      <td className="px-6 py-4 font-black text-slate-500 text-lg">#{comp.pos}</td>
+                      <td className="px-6 py-4">
+                        <div className="text-white font-medium">{comp.site}</div>
+                      </td>
+                      <td className="px-6 py-4 text-slate-400 font-mono">{comp.da}</td>
+                      <td className="px-6 py-4">
+                        {comp.isWeak ? (
+                          <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase bg-emerald-400/10 w-fit px-3 py-1 rounded-full border border-emerald-400/20">
+                            <Zap className="w-3 h-3" /> Fenda: {comp.type}
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 text-slate-500 text-xs font-bold uppercase bg-slate-900 w-fit px-3 py-1 rounded-full border border-slate-700">
+                            Blindado
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

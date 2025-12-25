@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+ï»¿import React, { useState, useEffect } from 'react';
 import { X, ChevronRight, Wand2, Compass, Target, BookOpen, ScanSearch, LineChart, Coins, Swords, Zap } from 'lucide-react';
 import { AppView, Language } from '../types';
 import { translations } from '../utils/translations';
@@ -20,7 +20,7 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ lang, isOpen, onClose, 
     }
   }, [isOpen]);
 
-  // Sincroniza a navegação do app com os passos do Tour
+  // Sincroniza a navegaÃ§Ã£o do app com os passos do Tour
   useEffect(() => {
     if (isOpen) {
       switch (currentStep) {
@@ -37,13 +37,13 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ lang, isOpen, onClose, 
   const steps = [
     {
       title: "Bem-vindo ao Backlinks Magia 4.0",
-      desc: "Sua central de comando para dominar o Google. Esqueça as métricas de vaidade, aqui focamos em ROI.",
+      desc: "Sua central de comando para dominar o Google. EsqueÃ§a as mÃ©tricas de vaidade, aqui focamos em ROI.",
       icon: Zap,
       color: "text-yellow-400"
     },
     {
-      title: "Mago da Estratégia",
-      desc: "O Oráculo que cria seu plano de ataque de 90 dias baseado no algoritmo Serp Armor Breaker.",
+      title: "Mago da EstratÃ©gia",
+      desc: "O OrÃ¡culo que cria seu plano de ataque de 90 dias baseado no algoritmo Serp Armor Breaker.",
       icon: Compass,
       color: "text-indigo-400"
     },
@@ -54,7 +54,7 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ lang, isOpen, onClose, 
       color: "text-red-400"
     },
     {
-      title: "Magia de Conteúdo",
+      title: "Magia de ConteÃºdo",
       desc: "Transforme brechas em ranking com o Content Magician. Crie artigos semanticamente superiores aos seus rivais.",
       icon: Wand2,
       color: "text-emerald-400"
@@ -118,7 +118,7 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ lang, isOpen, onClose, 
               onClick={handleNext}
               className="flex-[2] py-3 px-4 rounded-xl bg-indigo-600 text-white font-black hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-900/40 flex items-center justify-center gap-2 uppercase text-xs tracking-widest"
             >
-              {currentStep === steps.length - 1 ? "Entrar na Guerra" : "Próximo"}
+              {currentStep === steps.length - 1 ? "Entrar na Guerra" : "PrÃ³ximo"}
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>

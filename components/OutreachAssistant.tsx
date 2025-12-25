@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Send, Copy, RefreshCw, Loader2, Mail, Lightbulb, Check, SendHorizontal, MessageSquare, Terminal, Zap, Sparkles, UserCheck } from 'lucide-react';
+ï»¿import React, { useState } from 'react';
+import { Send, Copy, RefreshCw, Loader2, Mail, Lightbulb, Check, SendHorizontal, MessageSquare, Terminal, Zap, Sparkles, UserCheck, Globe } from 'lucide-react';
 import { generateOutreachEmail, generateGuestPostTopics } from '../services/geminiService';
 import { OutreachTemplate, Language } from '../types';
 import { translations } from '../utils/translations';
@@ -18,147 +18,166 @@ const OutreachAssistant: React.FC<OutreachAssistantProps> = ({ lang }) => {
   const [suggestedTopics, setSuggestedTopics] = useState<string[]>([]);
   const t = translations[lang].outreach;
 
-  // Mágica MarketPulse: Prompt de Outreach de Alta Conversão
   const copiarPromptOutreach = () => {
-    if (!targetName) { alert("Diga quem é o alvo!"); return; }
-    const prompt = `Você é um Especialista em Relações Públicas e Link Building.
-Alvo: "${targetName}"
-Assunto do meu site: "${contentTitle}"
-Estratégia: "${strategyType}"
+    if (!targetName) { 
+      alert(lang === 'en' ? "Who is the target?" : "Quem Ã© o alvo?"); 
+      return; 
+    }
+    const prompt = `VocÃª Ã© um Especialista em RelaÃ§Ãµes PÃºblicas e Link Building de Elite.
+Alvo (Nome ou Site): "${targetName}"
+Meu Nicho/Assunto: "${contentTitle || '[MEU ASSUNTO]'}"
+EstratÃ©gia: "${strategyType}"
 
-MISSÃO: Escreva um e-mail de outreach personalizado que NÃO pareça spam.
-1. Use um tom amigável e profissional.
-2. Comece com um elogio genuíno ao trabalho dele.
-3. Proponha um valor claro (ex: um conteúdo que falta no site dele).
-4. Assunto do e-mail deve ser curto e curioso.
+Sua missÃ£o: Escreva um e-mail de abordagem curto, altamente personalizado e que NÃƒO pareÃ§a spam.
+Use um gancho de curiosidade no assunto. O corpo deve focar no benefÃ­cio para o site DELES.
 
-SAÍDA EM JSON:
+RETORNE APENAS JSON:
 {
-  "subject": "Assunto do E-mail",
-  "body": "Corpo do e-mail formatado..."
+  "subject": "...",
+  "body": "..."
 }`;
     navigator.clipboard.writeText(prompt);
-    alert("Prompt de Conexão Copiado!");
+    alert(lang === 'en' ? "Outreach Mission copied!" : "MissÃ£o de Abordagem copiada! Use o Gemini para gerar o e-mail perfeito.");
   };
 
   const handleManualRender = () => {
     try {
       const data = JSON.parse(manualJson);
-      setEmail({ subject: data.subject, body: data.body });
+      setEmail(data);
+      setManualJson('');
     } catch (e) {
-      alert("Erro no JSON. Verifique a resposta.");
+      alert(lang === 'en' ? "Invalid JSON format." : "Formato JSON invÃ¡lido.");
     }
   };
 
-  const handleGenerate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!targetName || !contentTitle) return;
+  const handleGenerate = async () => {
+    if (!targetName) return;
     setLoading(true);
-    const result = await generateOutreachEmail(targetName, contentTitle, strategyType, lang);
-    setEmail(result);
-    setLoading(false);
+    try {
+      const result = await generateOutreachEmail(targetName, contentTitle, strategyType, lang);
+      setEmail(result);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="space-y-6">
-      {/* PAINEL DE CONEXÃO */}
-      <div className="bg-slate-800 p-8 rounded-xl border border-indigo-500/30 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-4 opacity-5">
-          <SendHorizontal className="w-32 h-32 text-white" />
-        </div>
+    <div className="space-y-8">
+      <div className="bg-slate-800/50 p-8 rounded-3xl border border-slate-700 shadow-2xl backdrop-blur-sm">
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="relative">
+              <UserCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 w-5 h-5" />
+              <input
+                type="text"
+                value={targetName}
+                onChange={(e) => setTargetName(e.target.value)}
+                placeholder={lang === 'en' ? "Target site or name..." : "Site alvo ou nome do contato..."}
+                className="w-full bg-slate-900/50 border-2 border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white focus:border-indigo-500 outline-none transition-all"
+              />
+            </div>
+            
+            <div className="relative">
+              <MessageSquare className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 w-5 h-5" />
+              <input
+                type="text"
+                value={contentTitle}
+                onChange={(e) => setContentTitle(e.target.value)}
+                placeholder={lang === 'en' ? "Your topic/niche..." : "Seu tÃ³pico ou nicho..."}
+                className="w-full bg-slate-900/50 border-2 border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white focus:border-indigo-500 outline-none transition-all"
+              />
+            </div>
 
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-6">
-            <UserCheck className="w-8 h-8 text-indigo-400" />
-            <h2 className="text-2xl font-bold text-white uppercase italic">Assistente de Outreach</h2>
+            <select
+              value={strategyType}
+              onChange={(e) => setStrategyType(e.target.value)}
+              className="w-full bg-slate-900/50 border-2 border-slate-700 rounded-2xl py-4 px-6 text-white focus:border-indigo-500 outline-none transition-all appearance-none"
+            >
+              <option value="Guest Post">Guest Post</option>
+              <option value="Skyscraper">Skyscraper Technique</option>
+              <option value="Broken Link">Broken Link Building</option>
+              <option value="Resource Page">Resource Page</option>
+            </select>
+
+            <button
+              onClick={handleGenerate}
+              disabled={loading || !targetName}
+              className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-lg"
+            >
+              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <SendHorizontal className="w-5 h-5" />}
+              {lang === 'en' ? "Draft Outreach" : "Rascunhar Abordagem"}
+            </button>
           </div>
 
-          <form onSubmit={handleGenerate} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-2 tracking-widest">Nome do Site/Autor</label>
-                <input
-                  type="text"
-                  value={targetName}
-                  onChange={(e) => setTargetName(e.target.value)}
-                  placeholder="Ex: Blog do Neil Patel"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-2 tracking-widest">Seu Tópico/URL</label>
-                <input
-                  type="text"
-                  value={contentTitle}
-                  onChange={(e) => setContentTitle(e.target.value)}
-                  placeholder="Ex: Guia de Backlinks 2026"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                />
-              </div>
+          <div className="bg-slate-900/50 rounded-2xl p-6 border border-slate-700 space-y-4">
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={copiarPromptOutreach}
+                className="w-full bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 px-4 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
+              >
+                <Copy className="w-4 h-4" /> {lang === 'en' ? "Copy Outreach Mission" : "Copiar MissÃ£o de Abordagem"}
+              </button>
+              
+              <button
+                onClick={() => window.open('https://gemini.google.com/app', '_blank')}
+                className="w-full bg-white text-slate-900 px-4 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg"
+              >
+                <Terminal className="w-4 h-4 text-indigo-600" /> {lang === 'en' ? "Open Gemini" : "Abrir Gemini"}
+              </button>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-2 tracking-widest">Estratégia de Abordagem</label>
-                <select 
-                  value={strategyType}
-                  onChange={(e) => setStrategyType(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                >
-                  <option>Guest Post</option>
-                  <option>Link Quebrado</option>
-                  <option>Mencionar Especialista</option>
-                  <option>Parceria de Conteúdo</option>
-                </select>
-              </div>
-              <div className="flex gap-3 pt-6">
-                <button type="button" onClick={copiarPromptOutreach} className="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2">
-                  <Copy className="w-4 h-4" /> PROMPT
-                </button>
-                <button type="submit" disabled={loading} className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2">
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
-                  GERAR
-                </button>
-              </div>
+            <div className="p-4 bg-indigo-950/20 rounded-xl border border-indigo-500/10">
+              <p className="text-indigo-300 text-[11px] mb-2 font-bold uppercase tracking-widest flex items-center gap-2">
+                <Globe className="w-3 h-3" /> {lang === 'en' ? "Outreach Protocol" : "Protocolo de Outreach"}
+              </p>
+              <textarea
+                value={manualJson}
+                onChange={(e) => setManualJson(e.target.value)}
+                placeholder='{ "subject": "...", "body": "..." }'
+                className="w-full h-24 bg-slate-900 border border-slate-700 rounded-lg p-3 text-emerald-400 font-mono text-xs focus:border-indigo-500 outline-none"
+              />
+              <button 
+                onClick={handleManualRender}
+                className="mt-2 w-full bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 border border-emerald-600/50 py-2 rounded-lg text-xs font-bold transition-all"
+              >
+                {lang === 'en' ? "MATERIALIZE EMAIL" : "VISUALIZAR E-MAIL"}
+              </button>
             </div>
-          </form>
-
-          {/* MODO ORÁCULO */}
-          <div className="mt-8 pt-6 border-t border-white/10">
-            <div className="flex items-center gap-2 text-indigo-400 mb-3 text-sm font-bold uppercase tracking-widest">
-              <Terminal className="w-4 h-4" /> Script de Conexão (Cole o JSON)
-            </div>
-            <textarea
-              value={manualJson}
-              onChange={(e) => setManualJson(e.target.value)}
-              placeholder="Cole o JSON do e-mail gerado aqui..."
-              className="w-full h-20 bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-indigo-400 font-mono focus:border-indigo-500 outline-none"
-            />
-            <button onClick={handleManualRender} className="mt-2 w-full bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-400 border border-indigo-600/50 py-2 rounded-lg text-sm font-bold transition-all">
-              VISUALIZAR E-MAIL
-            </button>
           </div>
         </div>
       </div>
 
-      {/* PREVIEW DO E-MAIL */}
+      {/* PREVIEW DO E-MAIL ESTILO INBOX */}
       {email && (
-        <div className="bg-white rounded-xl shadow-2xl overflow-hidden animate-in slide-in-from-right-8 duration-500">
-          <div className="bg-slate-100 px-6 py-3 border-b border-slate-200 flex items-center justify-between">
-            <div className="flex gap-1.5">
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-8 duration-500 max-w-4xl mx-auto border border-slate-200">
+          <div className="bg-slate-50 px-8 py-4 border-b border-slate-200 flex items-center justify-between">
+            <div className="flex gap-2">
               <div className="w-3 h-3 rounded-full bg-red-400"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-              <div className="w-3 h-3 rounded-full bg-green-400"></div>
+              <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+              <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
             </div>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-tighter">New Message</span>
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">SAB Outreach Console</span>
           </div>
-          <div className="p-8">
-            <div className="mb-6 border-b border-slate-100 pb-4">
-              <span className="text-slate-400 text-sm">Subject:</span>
-              <h3 className="text-slate-900 font-bold text-lg inline ml-2">{email.subject}</h3>
+          <div className="p-10">
+            <div className="mb-8 border-b border-slate-100 pb-6">
+              <div className="text-slate-400 text-xs font-bold uppercase mb-2">Subject:</div>
+              <h3 className="text-xl font-bold text-slate-800">{email.subject}</h3>
             </div>
-            <div className="text-slate-700 leading-relaxed whitespace-pre-wrap font-serif italic text-lg">
+            <div className="text-slate-600 leading-relaxed whitespace-pre-wrap font-serif text-lg">
               {email.body}
+            </div>
+            <div className="mt-10 pt-6 border-t border-slate-100 flex justify-end">
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(`Subject: ${email.subject}\n\n${email.body}`);
+                  alert(lang === 'en' ? "Email copied to clipboard!" : "E-mail copiado para a Ã¡rea de transferÃªncia!");
+                }}
+                className="bg-slate-900 hover:bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2 shadow-xl"
+              >
+                <Copy className="w-4 h-4" /> {lang === 'en' ? "Copy to Send" : "Copiar para Enviar"}
+              </button>
             </div>
           </div>
         </div>

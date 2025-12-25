@@ -1,4 +1,4 @@
-import React from 'react';
+Ôªøimport React from 'react';
 import { ShieldCheck, Zap, Brain, Rocket, AlertTriangle, Skull, CheckCircle2, RefreshCcw, Hammer, Megaphone, TrendingUp, Unlock, Swords, Target, Search } from 'lucide-react';
 import { Language } from '../types';
 import { translations } from '../utils/translations';
@@ -11,35 +11,35 @@ const WhyBacklinksMagia: React.FC<WhyBacklinksMagiaProps> = ({ lang }) => {
   const content = {
     pt: {
       title: "Por que o Backlinks Magia 4.0?",
-      subtitle: "A diferenÁa entre seguir o rebanho e dominar o mercado.",
+      subtitle: "A diferen√ßa entre seguir o rebanho e dominar o mercado.",
       dilemma_title: "O Grande Dilema do SEO Moderno",
-      dilemma_text: "O Google mudou. Aquela fÛrmula m·gica de 2018 (KGR) que todos os gurus ainda ensinam tornou-se o caminho mais r·pido para ser ignorado pelo algoritmo. O Google agora entende Entidades, Autoridade e IntenÁ„o.",
+      dilemma_text: "O Google mudou. Aquela f√≥rmula m√°gica de 2018 (KGR) que todos os gurus ainda ensinam tornou-se o caminho mais r√°pido para ser ignorado pelo algoritmo. O Google agora entende Entidades, Autoridade e Inten√ß√£o.",
       differentials: [
         {
           title: "Algoritmo SAB (Serp Armor Breaker)",
-          desc: "N„o contamos volume de busca. Encontramos falhas reais no Top 5 onde sites fracos ou fÛruns est„o ocupando espaÁo indevido. … cir˙rgico.",
+          desc: "N√£o contamos volume de busca. Encontramos falhas reais no Top 5 onde sites fracos ou f√≥runs est√£o ocupando espa√ßo indevido. √â cir√∫rgico.",
           icon: Swords
         },
         {
-          title: "InteligÍncia Sem‚ntica",
-          desc: "Nossas ferramentas n„o apenas sugerem palavras, elas constroem autoridade atravÈs de LSI e estruturaÁ„o de Silos que a IA do Google ama.",
+          title: "Intelig√™ncia Sem√¢ntica",
+          desc: "Nossas ferramentas n√£o apenas sugerem palavras, elas constroem autoridade atrav√©s de LSI e estrutura√ß√£o de Silos que a IA do Google ama.",
           icon: Brain
         },
         {
-          title: "ExecuÁ„o em Tempo Recorde",
-          desc: "O que levava semanas de an·lise manual agora È feito pelo Or·culo e pelo Wizard em minutos. O seu plano de 90 dias pronto em um clique.",
+          title: "Execu√ß√£o em Tempo Recorde",
+          desc: "O que levava semanas de an√°lise manual agora √© feito pelo Or√°culo e pelo Wizard em minutos. O seu plano de 90 dias pronto em um clique.",
           icon: Zap
         }
       ],
-      warning_title: "O Perigo das MÈtricas Obsoletas",
-      warning_text: "O KGR e o excesso de Backlinks de baixa qualidade morreram. Se vocÍ continuar usando as mesmas ferramentas que todo mundo usa, vocÍ ter· os mesmos resultados medÌocres que eles.",
+      warning_title: "O Perigo das M√©tricas Obsoletas",
+      warning_text: "O KGR e o excesso de Backlinks de baixa qualidade morreram. Se voc√™ continuar usando as mesmas ferramentas que todo mundo usa, voc√™ ter√° os mesmos resultados med√≠ocres que eles.",
       warning_points: [
-        "O Google ignora fÛrmulas matem·ticas simples (KGR).",
-        "Backlinks sem contexto s„o f·ceis de rastrear e punir.",
-        "A vitÛria agora pertence a quem identifica a brecha sem‚ntica."
+        "O Google ignora f√≥rmulas matem√°ticas simples (KGR).",
+        "Backlinks sem contexto s√£o f√°ceis de rastrear e punir.",
+        "A vit√≥ria agora pertence a quem identifica a brecha sem√¢ntica."
       ]
     }
-    // Adicionar 'en' conforme necess·rio
+    // Adicionar 'en' conforme necess√°rio
   }[lang] || {};
 
   return (
@@ -59,7 +59,7 @@ const WhyBacklinksMagia: React.FC<WhyBacklinksMagiaProps> = ({ lang }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Diferenciais - Agora com Õcones de 'Guerra' */}
+        {/* Diferenciais - Agora com √çcones de 'Guerra' */}
         {content.differentials.map((item: any, idx: number) => (
           <div key={idx} className="bg-slate-800/50 p-6 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-all group">
             <div className="w-12 h-12 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center text-indigo-400 mb-4 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all">
@@ -71,7 +71,7 @@ const WhyBacklinksMagia: React.FC<WhyBacklinksMagiaProps> = ({ lang }) => {
         ))}
       </div>
 
-      {/* SeÁ„o de Alerta - Impactante */}
+      {/* Se√ß√£o de Alerta - Impactante */}
       <div className="bg-red-950/20 border border-red-500/30 rounded-2xl p-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 p-4 opacity-5">
           <Skull className="w-48 h-48 text-red-500" />
@@ -103,7 +103,7 @@ const WhyBacklinksMagia: React.FC<WhyBacklinksMagiaProps> = ({ lang }) => {
 
       {/* Call to Action Final */}
       <div className="text-center py-6">
-        <p className="text-slate-500 text-xs uppercase tracking-[0.3em] font-bold mb-4">A tecnologia que os gurus n„o querem que vocÍ use</p>
+        <p className="text-slate-500 text-xs uppercase tracking-[0.3em] font-bold mb-4">A tecnologia que os gurus n√£o querem que voc√™ use</p>
         <div className="flex justify-center gap-2">
             <div className="h-1 w-12 bg-indigo-500 rounded-full"></div>
             <div className="h-1 w-4 bg-slate-700 rounded-full"></div>

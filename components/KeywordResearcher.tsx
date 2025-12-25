@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Search, Target, TrendingUp, DollarSign, BookOpen, Loader2, Download, Save, FolderOpen, ArrowUp, ArrowDown, ArrowUpDown, Swords, Users, Check, Wand2, Copy, Terminal } from 'lucide-react';
+Ôªøimport React, { useState, useMemo } from 'react';
+import { Search, Target, TrendingUp, DollarSign, BookOpen, Loader2, Download, Save, FolderOpen, ArrowUp, ArrowDown, ArrowUpDown, Swords, Users, Check, Wand2, Copy, Terminal, Zap, Globe } from 'lucide-react';
 import { generateKeywords, analyzeCompetitorGap } from '../services/geminiService';
 import { KeywordIdea, Language, KeywordMode, AppView } from '../types';
 import { translations } from '../utils/translations';
@@ -18,85 +18,71 @@ const KeywordResearcher: React.FC<KeywordResearcherProps> = ({ lang, onNavigate 
   const [competitorUrl, setCompetitorUrl] = useState('');
   const [competitorTopic, setCompetitorTopic] = useState('');
   const [loading, setLoading] = useState(false);
-  const [manualJson, setManualJson] = useState(''); // Estado para o modo manual
+  const [manualJson, setManualJson] = useState('');
   const [keywords, setKeywords] = useState<KeywordIdea[]>([]);
-  const [justSaved, setJustSaved] = useState(false);
   const [sortConfig, setSortConfig] = useState<{ key: SortKey | null; direction: SortDirection }>({ 
     key: null, 
     direction: 'asc' 
   });
-  
+
   const t = translations[lang].keywords;
 
-  // M·gica do MarketPulse: Copiar Prompt EstratÈgico
-  const copiarPromptRankNinja = () => {
-    const nicho = seed || competitorTopic || "[T”PICO]";
-    const url = competitorUrl || "https://dictionary.cambridge.org/dictionary/portuguese-english/concorrente";
-    
-    const instrucao = mode === 'discovery' 
-      ? `Descubra 15 palavras-chave de cauda longa (Oceano Azul) para o tÛpico "${nicho}". Foque em termos com baixa concorrÍncia.`
-      : `Analise o concorrente "${url}" no tÛpico "${nicho}". Identifique 10 gaps de conte˙do e palavras-chave onde eles s„o fortes.`;
+  const copiarSuperPrompt = () => {
+    const nicho = mode === 'discovery' ? seed : competitorTopic;
+    const prompt = `Atue como um Especialista em SEO SAB (Serp Armor Breaker).
+Analise o nicho "${nicho || '[DIGITE O NICHO]'}" em ${lang}.
+Procure por "Fendas na Armadura": palavras-chave onde o Top 5 √© dominado por f√≥runs (Reddit/Quora) ou sites de baixa autoridade.
+FOCO: Keywords de "Volume Zero" com alta inten√ß√£o de compra.
 
-    const prompt = `VocÍ È um Especialista em SEO. ${instrucao}
-    SAÕDA OBRIGAT”RIA EM JSON (Siga esta estrutura exata):
-    {
-      "keywords": [
-        { "keyword": "termo", "intent": "Transactional", "difficulty": "Low", "contentIdea": "Ideia de post" }
-      ]
-    }`;
+RETORNE APENAS O JSON NO FORMATO:
+[
+  {
+    "keyword": "...",
+    "intent": "Informational | Commercial | Transactional",
+    "difficulty": "Ex: Fenda detectada - Top 3 dominado por f√≥runs",
+    "contentIdea": "T√≠tulo Skyscraper com profundidade sem√¢ntica"
+  }
+]`;
     navigator.clipboard.writeText(prompt);
-    alert("Prompt de Espionagem Copiado! Cole no Gemini.");
+    alert("Miss√£o de Espionagem SAB copiada! Agora cole-a no Gemini.");
   };
 
   const handleManualRender = () => {
     try {
       const data = JSON.parse(manualJson);
-      if (data.keywords) {
-        setKeywords(data.keywords);
-        setSortConfig({ key: null, direction: 'asc' });
-      }
+      setKeywords(Array.isArray(data) ? data : data.keywords || []);
+      setManualJson('');
     } catch (e) {
-      alert("Erro no JSON. Verifique se copiou o cÛdigo completo.");
+      alert("Erro ao ler o JSON. Certifique-se de copiar exatamente o bloco [] gerado pelo Gemini.");
     }
   };
 
-  const handleResearch = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = async () => {
     setLoading(true);
-    setKeywords([]);
-    if (mode === 'discovery') {
-      if (!seed) { setLoading(false); return; }
-      const results = await generateKeywords(seed, lang);
+    try {
+      const results = mode === 'discovery' 
+        ? await generateKeywords(seed, lang)
+        : await analyzeCompetitorGap(competitorUrl, competitorTopic, lang);
       setKeywords(results);
-    } else {
-      if (!competitorUrl || !competitorTopic) { setLoading(false); return; }
-      const results = await analyzeCompetitorGap(competitorUrl, competitorTopic, lang);
-      setKeywords(results);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  // ... (Mantenha as funÁıes handleCreateContent, sortedKeywords, handleSort, handleExport, handleSave, handleLoad, getIntentIcon, getSortIcon idÍnticas ao seu cÛdigo original) ...
-  const handleCreateContent = (contentIdea: string) => {
-    localStorage.setItem('bm_draft_topic', contentIdea);
-    onNavigate(AppView.CONTENT_MAGIC);
+  const handleCreateContent = (title: string) => {
+    localStorage.setItem('pendingContentTitle', title);
+    onNavigate(AppView.STRATEGY_WIZARD);
   };
 
+  // L√≥gica de Ordena√ß√£o
   const sortedKeywords = useMemo(() => {
-    let sortableItems = [...keywords];
+    const sortableItems = [...keywords];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
-        const key = sortConfig.key as SortKey;
-        if (key === 'difficulty') {
-           const difficultyOrder: {[key: string]: number} = { 'Low': 1, 'Medium': 2, 'High': 3 };
-           const valA = difficultyOrder[a.difficulty] || 0;
-           const valB = difficultyOrder[b.difficulty] || 0;
-           if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
-           if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
-           return 0;
-        }
-        const aValue = a[key].toString().toLowerCase();
-        const bValue = b[key].toString().toLowerCase();
+        const aValue = a[sortConfig.key!];
+        const bValue = b[sortConfig.key!];
         if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
         if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
         return 0;
@@ -105,170 +91,172 @@ const KeywordResearcher: React.FC<KeywordResearcherProps> = ({ lang, onNavigate 
     return sortableItems;
   }, [keywords, sortConfig]);
 
-  const handleSort = (key: SortKey) => {
+  const requestSort = (key: SortKey) => {
     let direction: SortDirection = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
     setSortConfig({ key, direction });
-  };
-
-  const handleExport = () => {
-    if (sortedKeywords.length === 0) return;
-    const headers = [t.table_kw, t.table_intent, t.table_diff, t.table_idea];
-    const rows = sortedKeywords.map(k => [`"${k.keyword}"`, `"${k.intent}"`, `"${k.difficulty}"`, `"${k.contentIdea}"`]);
-    const csvContent = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `rank_ninja_${Date.now()}.csv`;
-    link.click();
-  };
-
-  const handleSave = () => {
-    localStorage.setItem('bm_saved_keywords', JSON.stringify(keywords));
-    setJustSaved(true);
-    setTimeout(() => setJustSaved(false), 2000);
-  };
-
-  const handleLoad = () => {
-    const saved = localStorage.getItem('bm_saved_keywords');
-    if (saved) setKeywords(JSON.parse(saved));
   };
 
   const getIntentIcon = (intent: string) => {
     switch (intent) {
+      case 'Informational': return <BookOpen className="w-4 h-4 text-blue-400" />;
+      case 'Commercial': return <TrendingUp className="w-4 h-4 text-purple-400" />;
       case 'Transactional': return <DollarSign className="w-4 h-4 text-emerald-400" />;
-      case 'Commercial': return <TrendingUp className="w-4 h-4 text-blue-400" />;
-      default: return <BookOpen className="w-4 h-4 text-slate-400" />;
+      default: return <Target className="w-4 h-4 text-slate-400" />;
     }
   };
 
-  const getSortIcon = (columnKey: SortKey) => {
-    if (sortConfig.key !== columnKey) return <ArrowUpDown className="w-4 h-4 ml-1 inline opacity-30" />;
-    return sortConfig.direction === 'asc' ? <ArrowUp className="w-4 h-4 ml-1 inline text-emerald-400" /> : <ArrowDown className="w-4 h-4 ml-1 inline text-emerald-400" />;
-  };
-
-  const isDiscovery = mode === 'discovery';
-
   return (
-    <div className="space-y-6">
-      <div className={`
-        relative p-8 rounded-xl border transition-colors duration-500 overflow-hidden
-        ${isDiscovery 
-          ? 'bg-gradient-to-r from-emerald-900/50 to-teal-900/50 border-emerald-500/30' 
-          : 'bg-gradient-to-r from-blue-900/50 to-indigo-900/50 border-blue-500/30'
-        }
-      `}>
-        {/* Tabs de Modo */}
-        <div className="flex gap-2 mb-6">
-          <button onClick={() => { setMode('discovery'); setKeywords([]); }} className={`px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 transition-all ${isDiscovery ? 'bg-emerald-600 text-white shadow-lg' : 'bg-slate-900/50 text-slate-400 hover:text-white hover:bg-slate-800'}`}>
-            <Target className="w-4 h-4" /> {t.mode_discovery}
-          </button>
-          <button onClick={() => { setMode('competitor'); setKeywords([]); }} className={`px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 transition-all ${!isDiscovery ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-900/50 text-slate-400 hover:text-white hover:bg-slate-800'}`}>
-            <Swords className="w-4 h-4" /> {t.mode_competitor}
-          </button>
-        </div>
+    <div className="space-y-8">
+      {/* SELE√á√ÉO DE MODO */}
+      <div className="flex p-1 bg-slate-900/50 rounded-2xl border border-slate-800 w-fit mx-auto">
+        <button
+          onClick={() => setMode('discovery')}
+          className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${mode === 'discovery' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+        >
+          <Search className="w-4 h-4" /> {t.modes.discovery}
+        </button>
+        <button
+          onClick={() => setMode('competitor')}
+          className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${mode === 'competitor' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+        >
+          <Swords className="w-4 h-4" /> {t.modes.competitor}
+        </button>
+      </div>
 
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-             {isDiscovery ? <Target className="w-8 h-8 text-emerald-400" /> : <Users className="w-8 h-8 text-blue-400" />}
-             <h2 className="text-2xl font-bold text-white">{t.title}</h2>
-          </div>
-          <button onClick={handleLoad} className={`flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium bg-slate-900/50 hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700`}>
-             <FolderOpen className="w-4 h-4" /> {t.load || 'Load Saved'}
-          </button>
-        </div>
-        
-        <p className="text-slate-300 mb-6 max-w-2xl">{isDiscovery ? t.subtitle : t.comp_desc}</p>
-        
-        <form onSubmit={handleResearch} className="space-y-4">
-          <div className={`flex flex-col md:flex-row gap-4 ${!isDiscovery ? 'items-end' : ''}`}>
-            {isDiscovery ? (
-              <input type="text" value={seed} onChange={(e) => setSeed(e.target.value)} placeholder={t.placeholder} className="flex-1 bg-slate-900/80 border border-emerald-500/30 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
-            ) : (
-              <>
-                <div className="flex-1 w-full">
-                  <label className="block text-xs font-bold text-blue-300 uppercase tracking-wider mb-2 ml-1">{t.comp_url_label}</label>
-                  <input type="text" value={competitorUrl} onChange={(e) => setCompetitorUrl(e.target.value)} placeholder={t.comp_url_placeholder} className="w-full bg-slate-900/80 border border-blue-500/30 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 outline-none" />
-                </div>
-                <div className="flex-1 w-full">
-                   <label className="block text-xs font-bold text-blue-300 uppercase tracking-wider mb-2 ml-1">{t.comp_topic_label}</label>
-                   <input type="text" value={competitorTopic} onChange={(e) => setCompetitorTopic(e.target.value)} placeholder={t.placeholder} className="w-full bg-slate-900/80 border border-blue-500/30 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 outline-none" />
-                </div>
-              </>
-            )}
-            
-            <button type="button" onClick={copiarPromptRankNinja} className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-lg font-medium transition-all flex items-center gap-2 border border-slate-500" title="Copiar Super Prompt">
-              <Copy className="w-5 h-5" /> Prompt
-            </button>
-            
-            <button type="submit" disabled={loading} className={`px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 ${isDiscovery ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white h-[50px]'}`}>
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
-              {loading ? t.loading : (isDiscovery ? t.button : t.comp_button)}
-            </button>
-          </div>
-
-          {/* ¡REA DE INPUT MANUAL (MODO RESILIENTE) */}
-          <div className="mt-6 pt-6 border-t border-white/10">
-            <div className="flex items-center gap-2 text-indigo-400 mb-3 text-sm font-bold uppercase tracking-wider">
-              <Terminal className="w-4 h-4" />
-              <span>Or·culo Manual (Cole o JSON do Gemini)</span>
+      <div className="bg-slate-800/50 p-8 rounded-3xl border border-slate-700 shadow-2xl backdrop-blur-sm">
+        <div className="space-y-6">
+          {mode === 'discovery' ? (
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400" />
+              <input
+                type="text"
+                value={seed}
+                onChange={(e) => setSeed(e.target.value)}
+                placeholder={t.placeholders.seed}
+                className="w-full bg-slate-900/50 border-2 border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white focus:border-indigo-500 outline-none transition-all"
+              />
             </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-4">
+              <input
+                type="text"
+                value={competitorUrl}
+                onChange={(e) => setCompetitorUrl(e.target.value)}
+                placeholder={t.placeholders.url}
+                className="bg-slate-900/50 border-2 border-slate-700 rounded-2xl py-4 px-6 text-white focus:border-indigo-500 outline-none transition-all"
+              />
+              <input
+                type="text"
+                value={competitorTopic}
+                onChange={(e) => setCompetitorTopic(e.target.value)}
+                placeholder={t.placeholders.topic}
+                className="bg-slate-900/50 border-2 border-slate-700 rounded-2xl py-4 px-6 text-white focus:border-indigo-500 outline-none transition-all"
+              />
+            </div>
+          )}
+
+          <button
+            onClick={handleSearch}
+            disabled={loading || (mode === 'discovery' ? !seed : !competitorUrl)}
+            className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-600/20"
+          >
+            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Zap className="w-6 h-6" />}
+            {t.searchButton}
+          </button>
+
+          {/* SE√á√ÉO DE COMANDO - ESTILO MARKETPULSE */}
+          <div className="mt-8 pt-8 border-t border-slate-700/50">
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+              <button
+                onClick={copiarSuperPrompt}
+                className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20"
+              >
+                <Copy className="w-5 h-5" /> Copiar Miss√£o de Espionagem
+              </button>
+              
+              <button
+                onClick={() => window.open('https://gemini.google.com/app', '_blank')}
+                className="flex-1 bg-white hover:bg-slate-100 text-slate-900 px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg"
+              >
+                <Terminal className="w-5 h-5 text-indigo-600" /> Abrir Gemini para colar Prompt
+              </button>
+            </div>
+
+            <div className="mb-4 p-4 bg-indigo-950/30 border border-indigo-500/20 rounded-lg">
+              <p className="text-indigo-300 text-sm mb-2 font-semibold flex items-center gap-2">
+                <Globe className="w-4 h-4" /> Protocolo SAB:
+              </p>
+              <ul className="text-slate-300 text-xs space-y-1 list-disc ml-4">
+                <li>Copie o <strong>Super Prompt</strong> de espionagem acima.</li>
+                <li>Abra o Gemini e cole o comando para iniciar a varredura de fendas.</li>
+                <li>Copie o c√≥digo JSON resultante (incluindo os colchetes [ ]).</li>
+                <li>Cole no campo abaixo para listar as palavras-chave de baixa competi√ß√£o.</li>
+              </ul>
+            </div>
+
             <textarea
               value={manualJson}
               onChange={(e) => setManualJson(e.target.value)}
-              placeholder="Cole o cÛdigo { 'keywords': [...] } aqui..."
-              className="w-full h-20 bg-slate-900/50 border border-white/10 rounded-lg p-3 text-xs text-emerald-400 font-mono focus:border-indigo-500 outline-none"
+              placeholder="Cole o array JSON [ ... ] retornado pelo Gemini aqui..."
+              className="w-full h-32 bg-slate-900 border border-slate-700 rounded-xl p-4 text-emerald-400 font-mono text-sm focus:border-indigo-500 outline-none transition-all"
             />
-            <button onClick={handleManualRender} className="mt-2 w-full bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-400 border border-indigo-600/50 py-2 rounded-lg text-sm font-bold transition-all">
-              RENDERIZAR PALAVRAS M¡GICAS
+            
+            <button 
+              onClick={handleManualRender}
+              className="mt-3 w-full bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 border border-emerald-600/50 py-3 rounded-xl text-sm font-bold transition-all uppercase"
+            >
+              Materializar Palavras-Chave no Painel
             </button>
           </div>
-        </form>
+        </div>
       </div>
 
-      {/* Tabela de Resultados (Mantenha o mesmo design que vocÍ enviou) */}
-      {sortedKeywords.length > 0 && (
-        <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden animate-in slide-in-from-bottom-4">
-          {/* ... (Todo o seu cÛdigo de <table> original aqui) ... */}
-          <div className="flex justify-end gap-3 p-4 border-b border-slate-700">
-             <button onClick={handleSave} className={`flex items-center gap-2 transition-colors text-sm font-medium ${justSaved ? 'text-emerald-400 bg-emerald-900/20 px-3 py-1.5 rounded-lg' : 'text-indigo-400 hover:text-indigo-300 px-3 py-1.5'}`}>
-                {justSaved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-                {justSaved ? (t.saved || 'Saved!') : (t.save || 'Save Research')}
-             </button>
-             <div className="w-px h-5 bg-slate-700 my-auto"></div>
-             <button onClick={handleExport} className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors text-sm font-medium px-3 py-1.5">
-                <Download className="w-4 h-4" /> {t.export || 'Export CSV'}
-             </button>
-          </div>
+      {keywords.length > 0 && (
+        <div className="bg-slate-800/50 rounded-3xl border border-slate-700 overflow-hidden shadow-xl">
           <div className="overflow-x-auto">
-            <table className="w-full text-left">
+            <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-900/50 border-b border-slate-700">
-                  <th className="px-6 py-4 text-slate-400 font-medium cursor-pointer" onClick={() => handleSort('keyword')}>{t.table_kw} {getSortIcon('keyword')}</th>
-                  <th className="px-6 py-4 text-slate-400 font-medium cursor-pointer" onClick={() => handleSort('intent')}>{t.table_intent} {getSortIcon('intent')}</th>
-                  <th className="px-6 py-4 text-slate-400 font-medium cursor-pointer" onClick={() => handleSort('difficulty')}>{t.table_diff} {getSortIcon('difficulty')}</th>
-                  <th className="px-6 py-4 text-slate-400 font-medium">{t.table_idea}</th>
+                  <th onClick={() => requestSort('keyword')} className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest cursor-pointer hover:text-white">
+                    <div className="flex items-center gap-2">Keyword <ArrowUpDown className="w-3 h-3" /></div>
+                  </th>
+                  <th onClick={() => requestSort('intent')} className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest cursor-pointer hover:text-white">
+                    <div className="flex items-center gap-2">Inten√ß√£o <ArrowUpDown className="w-3 h-3" /></div>
+                  </th>
+                  <th onClick={() => requestSort('difficulty')} className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest cursor-pointer hover:text-white">
+                    <div className="flex items-center gap-2">Fenda SAB <ArrowUpDown className="w-3 h-3" /></div>
+                  </th>
+                  <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">A√ß√£o Sugerida</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700">
-                {sortedKeywords.map((kw, idx) => (
-                  <tr key={idx} className="hover:bg-slate-700/30 transition-colors group">
+              <tbody className="divide-y divide-slate-700/50">
+                {sortedKeywords.map((kw, index) => (
+                  <tr key={index} className="hover:bg-indigo-500/5 transition-colors group">
                     <td className="px-6 py-4 text-white font-medium">{kw.keyword}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         {getIntentIcon(kw.intent)}
-                        <span className="text-sm">{kw.intent}</span>
+                        <span className="text-sm text-slate-300">{kw.intent}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${kw.difficulty === 'Low' ? 'bg-emerald-900 text-emerald-200' : kw.difficulty === 'Medium' ? 'bg-yellow-900 text-yellow-200' : 'bg-red-900 text-red-200'}`}>
+                      <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
                         {kw.difficulty}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-slate-300 text-sm">
                       <div className="flex items-center justify-between gap-4">
                          <span>{kw.contentIdea}</span>
-                         <button onClick={() => handleCreateContent(kw.contentIdea)} className="opacity-0 group-hover:opacity-100 p-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white transition-all"><Wand2 className="w-4 h-4" /></button>
+                         <button 
+                          onClick={() => handleCreateContent(kw.contentIdea)} 
+                          title="Criar Estrat√©gia de Conte√∫do"
+                          className="opacity-0 group-hover:opacity-100 p-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white transition-all shadow-lg shadow-indigo-600/40"
+                         >
+                          <Wand2 className="w-4 h-4" />
+                         </button>
                       </div>
                     </td>
                   </tr>

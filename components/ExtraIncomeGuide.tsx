@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Coins, Briefcase, Star, Search, Rocket, Zap, Youtube, CheckCircle2, TrendingUp, Lightbulb, MessageCircle, Copy, Share2, Users, Check } from 'lucide-react';
 import { Language } from '../types';
 import { translations } from '../utils/translations';
