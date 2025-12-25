@@ -1,4 +1,4 @@
-﻿import { Language } from '../types';
+import { Language } from '../types';
 
 const en: any = {
   nav: {
@@ -43,23 +43,6 @@ const en: any = {
   },
   academy: { title: "Academy", subtitle: "Learn SAB", courses: [] },
   keywords: { title: "SAB Research", subtitle: "Find gaps", placeholder: "Keyword...", button: "Analyze" }
-
-// Adicione isso dentro do objeto 'en' no translations.ts
-
-
-tour: {
-  next: "Next",
-  prev: "Previous",
-  finish: "Finish",
-  skip: "Skip",
-  steps: [
-    { title: "Dashboard", desc: "Your SEO command center. Monitor your growth and authority here." },
-    { title: "SAB Oracle", desc: "The brain of the operation. Create full SEO strategies using the SAB method." },
-    { title: "SAB Research", desc: "Find keywords with 'thin armor' where you can rank easily." },
-    { title: "Content Magic", desc: "Generate high-authority content optimized for your target keywords." },
-    { title: "Freelance Guide", desc: "Learn how to monetize your SEO skills and earn extra income." }
-  ]
-}
 };
 
 const pt: any = {
@@ -105,7 +88,6 @@ const pt: any = {
   },
   academy: { title: "Academy", subtitle: "Aprenda SAB", courses: [] },
   keywords: { title: "Pesquisa SAB", subtitle: "Encontre fendas", placeholder: "Palavra-chave...", button: "Analisar" }
-
 };
 
 // Mapeamento de exportação seguro
