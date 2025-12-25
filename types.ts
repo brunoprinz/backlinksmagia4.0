@@ -1,4 +1,4 @@
-export type Language = 'en' | 'pt' ';
+export type Language = 'en' | 'pt';
 
 export enum AppView {
   DASHBOARD = 'DASHBOARD',
@@ -15,5 +15,6 @@ export enum AppView {
   EXTRA_INCOME = 'EXTRA_INCOME',
   WHY_BACKLINKS = 'WHY_BACKLINKS'
 }
+
 
 // ... mantenha o restante das interfaces igual
