@@ -1,30 +1,29 @@
-﻿// translations.ts
-import { Language } from '../types';
+﻿import { Language } from '../types';
 
 const en = {
   nav: {
-    title: "Backlinks Magia",
-    subtitle: "v4.0.1 Stable",
+    title: "Backlinks Magia 4.0",
+    subtitle: "SAB Methodology",
     startHere: "Start Here",
-    why_us: "Why Backlinks Magia?",
+    why_us: "Why Us?",
     tools: "War Arsenal",
     learn: "Learn",
     dashboard: "Dashboard",
-    wizard: "SAB Oracle",
+    wizard: "SAB Oracle - Strategy Wizard",
     opportunities: "Find Opportunities",
-    keywords: "SAB Research",
-    kgr: "Armor Breaker (SAB)",
+    keywords: "SAB Research - Rank Ninja",
+    kgr: "Serp Armor Breaker",
     tracking: "Backlink Tracker",
     content: "Content Magician",
     outreach: "Outreach Assistant",
-    onpage: "Semantic Audit",
-    prompts: "Prompt Vault",
+    onpage: "Audit - On-Page Analyzer",
+    prompts: "Prompts - Vault",
     extra: "Freelance Wizard ($$)",
     academy: "SEO Academy"
   },
   dashboard: {
-    welcome: "Welcome to Backlinks Magia",
-    subtitle: "Your command center for search dominance using the SAB method.",
+    welcome: "Welcome back",
+    subtitle: "Your command center for search dominance.",
     stats_da: "Domain Authority",
     stats_links: "Total Backlinks",
     stats_growth: "Organic Growth",
@@ -33,12 +32,6 @@ const en = {
     action_audit: "SAB Oracle",
     action_content: "Create Content",
     action_links: "Opportunities"
-  },
-  wizard: {
-    title: "SAB Strategy Oracle",
-    subtitle: "Choose your scenario to break the competitor's armor.",
-    back: "Back",
-    plan: "SAB Domination Plan"
   }
 };
 
@@ -49,23 +42,23 @@ const pt = {
     startHere: "Comece Aqui",
     why_us: "Por que Backlinks Magia?",
     tools: "Arsenal de Guerra",
-    learn: "Aprender",
-    dashboard: "Painel",
-    wizard: "Oráculo SAB",
-    opportunities: "Oportunidades",
-    keywords: "Pesquisa SAB",
-    kgr: "Armor Breaker (SAB)",
-    tracking: "Monitor de Links",
-    content: "Mago do Conteúdo",
+    learn: "Aprenda",
+    dashboard: "Painel Principal",
+    wizard: "Oráculo SAB - Estrategista",
+    opportunities: "Encontrar Oportunidades",
+    keywords: "Pesquisa SAB - Rank Ninja",
+    kgr: "Serp Armor Breaker",
+    tracking: "Rastreador de Links",
+    content: "Mago de Conteúdo",
     outreach: "Assistente de Outreach",
-    onpage: "Auditoria Semântica",
-    prompts: "Biblioteca de Prompts",
-    extra: "Renda Extra SEO ($$)",
-    academy: "SEO Academy"
+    onpage: "Analisador On-Page",
+    prompts: "Cofre de Prompts",
+    extra: "Renda Extra Freelance ($$)",
+    academy: "Academia SEO"
   },
   dashboard: {
-    welcome: "Bem-vindo ao Backlinks Magia",
-    subtitle: "Sua central de comando para dominância de busca com o método SAB.",
+    welcome: "Bem-vindo de volta",
+    subtitle: "Sua central de comando para dominância de busca.",
     stats_da: "Autoridade do Domínio",
     stats_links: "Total de Backlinks",
     stats_growth: "Crescimento Orgânico",
@@ -74,16 +67,10 @@ const pt = {
     action_audit: "Oráculo SAB",
     action_content: "Criar Conteúdo",
     action_links: "Oportunidades"
-  },
-  wizard: {
-    title: "Oráculo de Estratégia SAB",
-    subtitle: "Escolha seu cenário para quebrar a armadura dos concorrentes.",
-    back: "Voltar",
-    plan: "Plano de Dominação SAB"
   }
 };
 
-export const translations = { 
+export const translations: any = { 
   en, pt, 
   es: en, fr: en, de: en, it: en, 'pt-pt': pt, zh: en 
 };
