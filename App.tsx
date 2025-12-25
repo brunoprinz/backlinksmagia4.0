@@ -149,7 +149,7 @@ const App: React.FC = () => {
   className="bg-slate-900 border border-slate-700 text-slate-300 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-indigo-500 uppercase"
 >
   <option value="pt">Português (BR)</option>
-  <option value="en">English (US)</option>
+  //<option value="en">English (US)</option>
 </select>
         </div>
 
