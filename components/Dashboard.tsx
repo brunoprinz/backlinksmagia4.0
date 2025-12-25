@@ -1,8 +1,8 @@
-﻿import React from 'react';
+import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Link, ShieldCheck, Activity, Wand2, Sparkles, Zap, Search } from 'lucide-react';
-import { Language, AppView } from '../types';
-import { translations } from '../utils/translations';
+import { Language, AppView } from '../types1';
+import { translations } from '../utils/translations1';
 
 interface DashboardProps {
   lang: Language;
@@ -46,11 +46,10 @@ const QuickAction = ({ label, icon: Icon, onClick }: { label: string, icon: any,
 );
 
 const Dashboard: React.FC<DashboardProps> = ({ lang, onNavigate }) => {
-  // O segredo para não dar tela azul: se a tradução falhar, ele usa o 'en' como backup
-  const t = translations[lang]?.dashboard || translations['en'].dashboard;
+  const t = translations[lang].dashboard;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-8 animate-fade-in">
       {/* Hero Section */}
       <div className="relative rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 p-8 md:p-12">
         {/* Magical Background Effects */}
@@ -62,14 +61,13 @@ const Dashboard: React.FC<DashboardProps> = ({ lang, onNavigate }) => {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-900/50 border border-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider">
               <Sparkles className="w-3 h-3" /> Backlinks Magia 4.0
             </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-none">
-              {t.welcome || "Bem-vindo ao Backlinks Magia"}
+            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+              {t.welcome}
             </h1>
             <p className="text-lg text-slate-300 max-w-xl">
-              {t.subtitle || "Sua central de comando para dominância de busca com o método SAB."}
+              {t.subtitle}
             </p>
           </div>
-          {/* ... restante do código (StatCards, etc) */}
           
           {/* Abstract Wizard Visual */}
           <div className="relative w-48 h-48 flex-shrink-0 flex items-center justify-center">
@@ -136,7 +134,7 @@ const Dashboard: React.FC<DashboardProps> = ({ lang, onNavigate }) => {
              <QuickAction label={t.action_audit} icon={ShieldCheck} onClick={() => onNavigate(AppView.STRATEGY_WIZARD)} />
              <QuickAction label={t.action_content} icon={Wand2} onClick={() => onNavigate(AppView.CONTENT_MAGIC)} />
              <QuickAction label={t.action_links} icon={Search} onClick={() => onNavigate(AppView.OPPORTUNITIES)} />
-             <QuickAction label="KGR" icon={Activity} onClick={() => onNavigate(AppView.KGR_CALCULATOR)} />
+             <QuickAction label="SAB" icon={Activity} onClick={() => onNavigate(AppView.SERP_ARMOR-BREAKER)} />
           </div>
         </div>
       </div>
