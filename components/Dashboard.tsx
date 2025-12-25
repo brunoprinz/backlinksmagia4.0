@@ -1,8 +1,8 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Link, ShieldCheck, Activity, Wand2, Sparkles, Zap, Search } from 'lucide-react';
-import { Language, AppView } from '../types1';
-import { translations } from '../utils/translations1';
+import { Language, AppView } from '../types';
+import { translations } from '../utils/translations';
 
 interface DashboardProps {
   lang: Language;
@@ -134,7 +134,7 @@ const Dashboard: React.FC<DashboardProps> = ({ lang, onNavigate }) => {
              <QuickAction label={t.action_audit} icon={ShieldCheck} onClick={() => onNavigate(AppView.STRATEGY_WIZARD)} />
              <QuickAction label={t.action_content} icon={Wand2} onClick={() => onNavigate(AppView.CONTENT_MAGIC)} />
              <QuickAction label={t.action_links} icon={Search} onClick={() => onNavigate(AppView.OPPORTUNITIES)} />
-             <QuickAction label="SAB" icon={Activity} onClick={() => onNavigate(AppView.SERP_ARMOR-BREAKER)} />
+             <QuickAction label="KGR" icon={Activity} onClick={() => onNavigate(AppView.KGR_CALCULATOR)} />
           </div>
         </div>
       </div>
