@@ -155,23 +155,24 @@ const BacklinkTracker: React.FC<BacklinkTrackerProps> = ({ lang }) => {
                 </div>
                 
                 {/* O resto do seu gráfico e cards de estatísticas continua aqui... */}
-                <div className="h-[300px] w-full bg-slate-900/50 rounded-2xl p-4 border border-slate-700">
-                   <ResponsiveContainer width=\"100%\" height=\"100%\">
-                    <AreaChart data={selectedSite.history}>
-                      <defs>
-                        <linearGradient id=\"colorDr\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">
-                          <stop offset=\"5%\" stopColor=\"#6366f1\" stopOpacity={0.3}/>
-                          <stop offset=\"95%\" stopColor=\"#6366f1\" stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray=\"3 3\" stroke=\"#334155\" vertical={false} />
-                      <XAxis dataKey=\"date\" stroke=\"#64748b\" fontSize={12} />
-                      <YAxis stroke=\"#64748b\" fontSize={12} />
-                      <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '12px' }} />
-                      <Area type=\"monotone\" dataKey=\"dr\" stroke=\"#6366f1\" strokeWidth={3} fillOpacity={1} fill=\"url(#colorDr)\" />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
+            // Versão Corrigida
+<div className="h-[300px] mt-8">
+  <ResponsiveContainer width="100%" height="100%">
+    <AreaChart data={selectedSite.history}>
+      <defs>
+        <linearGradient id="colorDr" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
+          <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+        </linearGradient>
+      </defs>
+      <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+      <XAxis dataKey="date" stroke="#64748b" fontSize={12} />
+      <YAxis stroke="#64748b" fontSize={12} />
+      <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '12px' }} />
+      <Area type="monotone" dataKey="dr" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#colorDr)" />
+    </AreaChart>
+  </ResponsiveContainer>
+</div>
             </div>
           ) : (
             <div className="bg-slate-800/30 h-full min-h-[400px] rounded-3xl border-2 border-dashed border-slate-700 flex flex-col items-center justify-center text-center p-12">
