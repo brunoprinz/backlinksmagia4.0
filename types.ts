@@ -1,4 +1,4 @@
-export type Language = 'en' | 'pt' | 'es' | 'fr' | 'de' | 'it' | 'zh' | 'pt-pt';
+export type Language = 'en' | 'pt' ';
 
 export enum AppView {
   DASHBOARD = 'DASHBOARD',

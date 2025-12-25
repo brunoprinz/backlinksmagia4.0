@@ -2,7 +2,7 @@
 import { Search, Target, TrendingUp, DollarSign, BookOpen, Loader2, Download, Save, FolderOpen, ArrowUp, ArrowDown, ArrowUpDown, Swords, Users, Check, Wand2, Copy, Terminal, Zap, Globe } from 'lucide-react';
 import { generateKeywords, analyzeCompetitorGap } from '../services/geminiService';
 import { KeywordIdea, Language, KeywordMode, AppView } from '../types';
-import { translations } from '../utils/translations';
+import { translations } from '../utils/translations1';
 
 interface KeywordResearcherProps {
   lang: Language;

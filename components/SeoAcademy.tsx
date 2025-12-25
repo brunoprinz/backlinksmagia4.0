@@ -5,7 +5,7 @@ import {
   Sparkles, ListChecks, Crown, Rocket, ArrowRight, FileText
 } from 'lucide-react';
 import { Language } from '../types';
-import { translations } from '../utils/translations';
+import { translations } from '../utils/translations1';
 
 interface SeoAcademyProps { lang: Language; }
 
