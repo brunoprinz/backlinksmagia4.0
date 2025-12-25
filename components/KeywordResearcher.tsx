@@ -1,7 +1,7 @@
 ﻿import React, { useState, useMemo } from 'react';
 import { Search, Target, TrendingUp, DollarSign, BookOpen, Loader2, Download, Save, FolderOpen, ArrowUp, ArrowDown, ArrowUpDown, Swords, Users, Check, Wand2, Copy, Terminal, Zap, Globe } from 'lucide-react';
 import { generateKeywords, analyzeCompetitorGap } from '../services/geminiService';
-import { KeywordIdea, Language, KeywordMode, AppView } from '../types';
+import { KeywordIdea, Language, KeywordMode, AppView } from '../types1';
 import { translations } from '../utils/translations1';
 
 interface KeywordResearcherProps {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, ChevronRight, Wand2, Compass, Target, BookOpen, ScanSearch, LineChart, Coins } from 'lucide-react';
-import { AppView, Language } from '../types';
+import { AppView, Language } from '../types1';
 import { translations } from '../utils/translations1';
 
 interface OnboardingTourProps {
