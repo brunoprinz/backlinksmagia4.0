@@ -43,6 +43,23 @@ const en: any = {
   },
   academy: { title: "Academy", subtitle: "Learn SAB", courses: [] },
   keywords: { title: "SAB Research", subtitle: "Find gaps", placeholder: "Keyword...", button: "Analyze" }
+
+// Adicione isso dentro do objeto 'en' no translations.ts
+
+
+tour: {
+  next: "Next",
+  prev: "Previous",
+  finish: "Finish",
+  skip: "Skip",
+  steps: [
+    { title: "Dashboard", desc: "Your SEO command center. Monitor your growth and authority here." },
+    { title: "SAB Oracle", desc: "The brain of the operation. Create full SEO strategies using the SAB method." },
+    { title: "SAB Research", desc: "Find keywords with 'thin armor' where you can rank easily." },
+    { title: "Content Magic", desc: "Generate high-authority content optimized for your target keywords." },
+    { title: "Freelance Guide", desc: "Learn how to monetize your SEO skills and earn extra income." }
+  ]
+}
 };
 
 const pt: any = {
@@ -88,16 +105,27 @@ const pt: any = {
   },
   academy: { title: "Academy", subtitle: "Aprenda SAB", courses: [] },
   keywords: { title: "Pesquisa SAB", subtitle: "Encontre fendas", placeholder: "Palavra-chave...", button: "Analisar" }
+
+  tour: {
+  next: "Próximo",
+  prev: "Anterior",
+  finish: "Finalizar",
+  skip: "Pular",
+  steps: [
+    { title: "Painel Principal", desc: "Sua central de comando. Monitore seu crescimento e autoridade aqui." },
+    { title: "Oráculo SAB", desc: "O cérebro da operação. Crie estratégias completas usando o método SAB." },
+    { title: "Pesquisa SAB", desc: "Encontre palavras-chave com 'armadura fina' onde você pode ranquear fácil." },
+    { title: "Mago de Conteúdo", desc: "Gere conteúdo de alta autoridade otimizado para suas palavras-chave." },
+    { title: "Guia Freelance", desc: "Aprenda como monetizar suas habilidades de SEO e gerar renda extra." }
+  ]
+}
+
 };
 
 // Mapeamento de exportação seguro
+
 export const translations: any = {
-  'en': en,
-  'pt': pt,
-  'pt-pt': pt,
-  'es': { ...en, nav: { ...en.nav, title: "Backlinks Magia ES" } },
-  'fr': { ...en, nav: { ...en.nav, title: "Backlinks Magie" } },
-  'it': { ...en, nav: { ...en.nav, title: "Backlinks Magia IT" } },
-  'de': { ...en, nav: { ...en.nav, title: "Backlinks Magie DE" } },
-  'zh': en
+  en: pt, // <--- Aqui está o truque: 'en' agora aponta para o objeto 'pt'
+  pt: pt,
+  'pt-BR': pt
 };

@@ -27,7 +27,7 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.DASHBOARD);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // Importante: use 'pt-BR' se for o padrão do seu novo types.ts
-  const [language, setLanguage] = useState<Language>('pt-BR' as Language); 
+  const [language, setLanguage] = useState<Language>('pt' as Language); 
   const [showTour, setShowTour] = useState(false);
 
   // Fallback de segurança para evitar tela azul caso a tradução falhe
@@ -144,18 +144,13 @@ const App: React.FC = () => {
         {/* Language Selector Overlay */}
         <div className="absolute top-4 right-8 z-40 hidden lg:block">
           <select 
-            value={language}
-            onChange={(e) => setLanguage(e.target.value as Language)}
-            className="bg-slate-900 border border-slate-700 text-slate-300 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-indigo-500 uppercase"
-          >
-            <option value="pt">PT</option>
-            <option value="en">EN-US</option>
-            <option value="es">ES</option>
-            <option value="fr">FR</option>
-            <option value="it">IT</option>
-            <option value="de">DE</option>
-            <option value="pt-pt">PT-PT</option>
-          </select>
+  value={language} 
+  onChange={(e) => setLanguage(e.target.value as Language)}
+  className="bg-slate-900 border border-slate-700 text-slate-300 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-indigo-500 uppercase"
+>
+  <option value="pt">Português (BR)</option>
+  <option value="en">English (US)</option>
+</select>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 lg:p-8 pt-20 lg:pt-8 custom-scrollbar">
