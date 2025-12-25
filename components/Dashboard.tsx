@@ -46,10 +46,11 @@ const QuickAction = ({ label, icon: Icon, onClick }: { label: string, icon: any,
 );
 
 const Dashboard: React.FC<DashboardProps> = ({ lang, onNavigate }) => {
-  const t = translations[lang].dashboard;
+  // O segredo para não dar tela azul: se a tradução falhar, ele usa o 'en' como backup
+  const t = translations[lang]?.dashboard || translations['en'].dashboard;
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-in fade-in duration-500">
       {/* Hero Section */}
       <div className="relative rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 p-8 md:p-12">
         {/* Magical Background Effects */}
@@ -61,13 +62,14 @@ const Dashboard: React.FC<DashboardProps> = ({ lang, onNavigate }) => {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-900/50 border border-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider">
               <Sparkles className="w-3 h-3" /> Backlinks Magia 4.0
             </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
-              {t.welcome}
+            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-none">
+              {t.welcome || "Bem-vindo ao Backlinks Magia"}
             </h1>
             <p className="text-lg text-slate-300 max-w-xl">
-              {t.subtitle}
+              {t.subtitle || "Sua central de comando para dominância de busca com o método SAB."}
             </p>
           </div>
+          {/* ... restante do código (StatCards, etc) */}
           
           {/* Abstract Wizard Visual */}
           <div className="relative w-48 h-48 flex-shrink-0 flex items-center justify-center">
