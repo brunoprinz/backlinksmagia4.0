@@ -1,13 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { 
-  LayoutDashboard, Telescope, Wand2, SendHorizontal, Menu, X, 
-  Target, BookOpen, LineChart, Compass, Globe, HelpCircle, 
-  ScanSearch, Coins, Bot, Star, Swords, ShieldAlert, Zap 
-} from 'lucide-react';
+import { LayoutDashboard, Telescope, Wand2, SendHorizontal, Menu, X, Target, BookOpen, LineChart, Calculator, Compass, Globe, HelpCircle, ScanSearch, Coins, Bot, Star } from 'lucide-react';
 import { AppView, Language } from './types';
 import { translations } from './utils/translations';
-
-// Importação das Telas
 import Dashboard from './components/Dashboard';
 import OpportunityFinder from './components/OpportunityFinder';
 import ContentMagician from './components/ContentMagician';
@@ -15,7 +9,7 @@ import OutreachAssistant from './components/OutreachAssistant';
 import KeywordResearcher from './components/KeywordResearcher';
 import SeoAcademy from './components/SeoAcademy';
 import BacklinkTracker from './components/BacklinkTracker';
-import SerpArmorBreaker from './components/SerpArmorBreaker';
+import SerpArmorBreak from './components/SerpArmorBreaker';
 import StrategyWizard from './components/StrategyWizard';
 import OnboardingTour from './components/OnboardingTour';
 import OnPageAnalyzer from './components/OnPageAnalyzer';
@@ -26,158 +20,221 @@ import WhyBacklinksMagia from './components/WhyBacklinksMagia';
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.DASHBOARD);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Importante: use 'pt-BR' se for o padrão do seu novo types.ts
-  const [language, setLanguage] = useState<Language>('pt' as Language); 
+  const [language, setLanguage] = useState<Language>('pt'); 
   const [showTour, setShowTour] = useState(false);
 
-  // Fallback de segurança para evitar tela azul caso a tradução falhe
-  const t = translations[language]?.nav || translations['en'].nav;
+  const t = translations[language].sidebar;
 
-  // Lógica para mostrar o tour automaticamente na primeira vez
   useEffect(() => {
-    const hasSeenTour = localStorage.getItem('hasSeenTourV4');
+    const hasSeenTour = localStorage.getItem('bm_tour_seen');
     if (!hasSeenTour) {
-      // Pequeno delay para a página carregar visualmente antes do tour
-      const timer = setTimeout(() => setShowTour(true), 1500);
-      localStorage.setItem('hasSeenTourV4', 'true');
-      return () => clearTimeout(timer);
+      // Small delay to ensure render is complete
+      setTimeout(() => setShowTour(true), 500);
     }
   }, []);
 
-  const startTour = () => {
+  const handleNavigate = (view: AppView) => {
+    setCurrentView(view);
     setMobileMenuOpen(false);
+  };
+
+  const startTour = () => {
     setShowTour(true);
+    setMobileMenuOpen(false);
+  };
+
+  const renderContent = () => {
+    switch (currentView) {
+      case AppView.DASHBOARD:
+        return <Dashboard lang={language} onNavigate={handleNavigate} />;
+      case AppView.STRATEGY_WIZARD:
+        return <StrategyWizard lang={language} onNavigate={handleNavigate} />;
+      case AppView.WHY_US:
+        return <WhyBacklinksMagia lang={language} />;
+      case AppView.OPPORTUNITIES:
+        return <OpportunityFinder lang={language} />;
+      case AppView.KEYWORDS:
+        return <KeywordResearcher lang={language} onNavigate={handleNavigate} />;
+      case AppView.CONTENT_MAGIC:
+        return <ContentMagician lang={language} />;
+      case AppView.OUTREACH:
+        return <OutreachAssistant lang={language} />;
+      case AppView.ACADEMY:
+        return <SeoAcademy lang={language} />;
+      case AppView.TRACKING:
+        return <BacklinkTracker lang={language} />;
+      case AppView.KGR_CALCULATOR:
+        return <KgrCalculator lang={language} />;
+      case AppView.ONPAGE_ANALYZER:
+        return <OnPageAnalyzer lang={language} />;
+      case AppView.EXTRA_INCOME:
+        return <ExtraIncomeGuide lang={language} />;
+      case AppView.PROMPT_LIBRARY:
+        return <PromptLibrary lang={language} />;
+      default:
+        return <Dashboard lang={language} onNavigate={handleNavigate} />;
+    }
   };
 
   const NavItem = ({ view, icon: Icon, label }: { view: AppView, icon: any, label: string }) => (
     <button
-      onClick={() => {
-        setCurrentView(view);
-        setMobileMenuOpen(false);
-      }}
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
-        currentView === view 
-          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' 
-          : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+      onClick={() => handleNavigate(view)}
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+        currentView === view
+          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+          : 'text-slate-400 hover:bg-slate-800 hover:text-white'
       }`}
     >
-      <Icon className={`w-5 h-5 ${currentView === view ? 'text-white' : 'group-hover:text-indigo-400'}`} />
-      <span className="font-bold text-sm uppercase tracking-tight">{label}</span>
+      <Icon className="w-5 h-5" />
+      <span className="font-medium">{label}</span>
     </button>
   );
 
   return (
-    <div className="flex h-screen bg-slate-950 text-slate-200 overflow-hidden font-sans">
-      
-      {/* Sidebar (Desktop & Mobile Base) */}
-      <aside className={`
-        ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} 
-        lg:translate-x-0 fixed lg:static inset-0 z-50
-        flex flex-col w-72 bg-slate-900 border-r border-slate-800 transition-transform duration-300 overflow-y-auto custom-scrollbar
-      `}>
-        <div className="p-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-indigo-600 p-2 rounded-lg shadow-lg shadow-indigo-900/40">
-              <Swords className="w-6 h-6 text-white" />
-            </div>
-            <h1 className="text-xl font-black text-white tracking-tighter uppercase italic">
-              {t.title}
-            </h1>
+    <div className="min-h-screen bg-slate-900 flex text-slate-100 overflow-hidden font-sans">
+      <OnboardingTour 
+        lang={language} 
+        isOpen={showTour} 
+        onClose={() => setShowTour(false)} 
+        onNavigate={setCurrentView}
+      />
+
+      {/* Sidebar - Desktop */}
+      <aside className="hidden lg:flex flex-col w-64 border-r border-slate-800 bg-slate-900 p-6 z-20">
+        <div className="flex items-center gap-2 mb-8">
+          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-purple-500/20">
+            <Wand2 className="w-5 h-5 text-white" />
           </div>
-          <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-[0.2em] px-1">
-            {t.subtitle}
-          </p>
+          <div>
+             <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+              {t.title}
+            </span>
+            <p className="text-[10px] text-slate-500">{t.subtitle}</p>
+          </div>
         </div>
 
-        <nav className="flex-1 px-4 space-y-1">
-          <div className="pb-4">
-            <p className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2">{t.startHere}</p>
-            <NavItem view={AppView.DASHBOARD} icon={LayoutDashboard} label={t.dashboard} />
-            <NavItem view={AppView.WHY_BACKLINKS} icon={Star} label={t.why_us} />
-          </div>
+        {/* Language Selector */}
+        <div className="mb-6">
+           <div className="bg-slate-800 p-1 rounded-lg grid grid-cols-4 gap-1 border border-slate-700">
+              {(['en', 'pt', 'es', 'fr', 'de', 'it', 'pt-pt', 'zh'] as Language[]).map((lang) => (
+                <button
+                  key={lang}
+                  onClick={() => setLanguage(lang)}
+                  className={`text-[10px] font-bold py-1.5 rounded uppercase transition-colors ${
+                      language === lang ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-slate-300'
+                  }`}
+                  title={lang === 'pt-pt' ? 'Português (Portugal)' : lang}
+                >
+                  {lang === 'pt-pt' ? 'PT-PT' : lang}
+                </button>
+              ))}
+           </div>
+        </div>
 
-          <div className="py-4 border-t border-slate-800/50">
-            <p className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2">{t.tools}</p>
-            <NavItem view={AppView.STRATEGY_WIZARD} icon={ShieldAlert} label={t.wizard} />
-            <NavItem view={AppView.KEYWORDS} icon={Target} label={t.keywords} />
-            <NavItem view={AppView.SERP_ARMOR_BREAKER} icon={Zap} label={t.kgr} />
-            <NavItem view={AppView.OPPORTUNITIES} icon={Telescope} label={t.opportunities} />
-            <NavItem view={AppView.ONPAGE_ANALYZER} icon={ScanSearch} label={t.onpage} />
-            <NavItem view={AppView.CONTENT_MAGIC} icon={Wand2} label={t.content} />
-            <NavItem view={AppView.OUTREACH} icon={SendHorizontal} label={t.outreach} />
-            <NavItem view={AppView.TRACKING} icon={LineChart} label={t.tracking} />
+        <nav className="space-y-1 flex-1 overflow-y-auto scrollbar-thin">
+          <NavItem view={AppView.DASHBOARD} icon={LayoutDashboard} label={t.dashboard} />
+          <div className="pb-2">
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-4 pt-4">{t.startHere}</div>
+            <NavItem view={AppView.STRATEGY_WIZARD} icon={Compass} label={t.wizard} />
+            <NavItem view={AppView.WHY_US} icon={Star} label={t.why_us} />
           </div>
-
-          <div className="py-4 border-t border-slate-800/50">
-            <p className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2">{t.learn}</p>
-            <NavItem view={AppView.ACADEMY} icon={BookOpen} label={t.academy} />
-            <NavItem view={AppView.PROMPT_LIBRARY} icon={Bot} label={t.prompts} />
-            <NavItem view={AppView.EXTRA_INCOME} icon={Coins} label={t.extra} />
-          </div>
-          
-          <div className="pt-4 border-t border-slate-800 mt-4 mb-8">
-            <button 
-              onClick={startTour}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all group"
-            >
-              <HelpCircle className="w-5 h-5 group-hover:text-indigo-400" />
-              <span className="font-bold text-sm uppercase tracking-tight text-left">Tour de Ajuda</span>
-            </button>
-          </div>
+          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-4 pt-2">{t.tools}</div>
+          <NavItem view={AppView.OPPORTUNITIES} icon={Telescope} label={t.opportunities} />
+          <NavItem view={AppView.KEYWORDS} icon={Target} label={t.keywords} />
+          <NavItem view={AppView.SERP_ARMOR_BREAKER} icon={Zap} label={t.kgr} />
+          <NavItem view={AppView.ONPAGE_ANALYZER} icon={ScanSearch} label={t.onpage} />
+          <NavItem view={AppView.PROMPT_LIBRARY} icon={Bot} label={t.prompts} />
+          <NavItem view={AppView.TRACKING} icon={LineChart} label={t.tracking} />
+          <NavItem view={AppView.CONTENT_MAGIC} icon={Wand2} label={t.content} />
+          <NavItem view={AppView.OUTREACH} icon={SendHorizontal} label={t.outreach} />
+          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-4 pt-4">{t.learn}</div>
+          <NavItem view={AppView.ACADEMY} icon={BookOpen} label={t.academy} />
+          <NavItem view={AppView.EXTRA_INCOME} icon={Coins} label={t.extra} />
         </nav>
+
+        <div className="pt-4 mt-2 border-t border-slate-800">
+          <button 
+             onClick={startTour}
+             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all"
+          >
+             <HelpCircle className="w-5 h-5" />
+             <span className="font-medium">Help Tour</span>
+          </button>
+        </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        
+      <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
         {/* Mobile Header */}
-        <div className="lg:hidden flex items-center justify-between p-4 bg-slate-900 border-b border-slate-800 z-50">
+        <header className="lg:hidden h-16 border-b border-slate-800 flex items-center justify-between px-4 bg-slate-900 z-10">
           <div className="flex items-center gap-2">
-            <Swords className="w-6 h-6 text-indigo-500" />
-            <span className="font-black text-white uppercase italic">{t.title}</span>
+             <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <Wand2 className="w-5 h-5 text-white" />
+            </div>
+            <span className="font-bold">{t.title}</span>
           </div>
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 text-slate-400">
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 text-slate-300">
             {mobileMenuOpen ? <X /> : <Menu />}
           </button>
-        </div>
+        </header>
 
-        {/* Language Selector Overlay */}
-        <div className="absolute top-4 right-8 z-40 hidden lg:block">
-          <select 
-  value={language} 
-  onChange={(e) => setLanguage(e.target.value as Language)}
-  className="bg-slate-900 border border-slate-700 text-slate-300 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-indigo-500 uppercase"
->
-  <option value="pt">Português (BR)</option>
-  //<option value="en">English (US)</option>
-</select>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-4 lg:p-8 pt-20 lg:pt-8 custom-scrollbar">
-          <div className="max-w-7xl mx-auto">
-            {currentView === AppView.DASHBOARD && <Dashboard lang={language} onNavigate={setCurrentView} />}
-            {currentView === AppView.WHY_BACKLINKS && <WhyBacklinksMagia lang={language} />}
-            {currentView === AppView.STRATEGY_WIZARD && <StrategyWizard lang={language} onNavigate={setCurrentView} />}
-            {currentView === AppView.OPPORTUNITIES && <OpportunityFinder lang={language} />}
-            {currentView === AppView.KEYWORDS && <KeywordResearcher lang={language} onNavigate={setCurrentView} />}
-            {currentView === AppView.SERP_ARMOR_BREAKER && <SerpArmorBreaker lang={language} />}
-            {currentView === AppView.ONPAGE_ANALYZER && <OnPageAnalyzer lang={language} />}
-            {currentView === AppView.CONTENT_MAGIC && <ContentMagician lang={language} />}
-            {currentView === AppView.OUTREACH && <OutreachAssistant lang={language} />}
-            {currentView === AppView.ACADEMY && <SeoAcademy lang={language} />}
-            {currentView === AppView.TRACKING && <BacklinkTracker lang={language} />}
-            {currentView === AppView.EXTRA_INCOME && <ExtraIncomeGuide lang={language} />}
-            {currentView === AppView.PROMPT_LIBRARY && <PromptLibrary lang={language} />}
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden fixed inset-0 bg-slate-900 z-20 p-6 animate-in slide-in-from-right overflow-y-auto">
+             <div className="flex justify-between mb-6">
+                 {/* Mobile Lang Selector */}
+                 <div className="grid grid-cols-4 gap-2 w-full max-w-[280px]">
+                    {(['en', 'pt', 'es', 'fr', 'de', 'it', 'pt-pt', 'zh'] as Language[]).map((lang) => (
+                       <button
+                          key={lang}
+                          onClick={() => setLanguage(lang)}
+                          className={`h-8 rounded border flex items-center justify-center text-[10px] font-bold uppercase ${
+                             language === lang ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-700 text-slate-400'
+                          }`}
+                       >
+                          {lang === 'pt-pt' ? 'PT-PT' : lang}
+                       </button>
+                    ))}
+                 </div>
+                 <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-slate-300 ml-2">
+                    <X />
+                 </button>
+             </div>
+             <nav className="space-y-2">
+                <NavItem view={AppView.DASHBOARD} icon={LayoutDashboard} label={t.dashboard} />
+                <NavItem view={AppView.STRATEGY_WIZARD} icon={Compass} label={t.wizard} />
+                <NavItem view={AppView.WHY_US} icon={Star} label={t.why_us} />
+                <NavItem view={AppView.OPPORTUNITIES} icon={Telescope} label={t.opportunities} />
+                <NavItem view={AppView.KEYWORDS} icon={Target} label={t.keywords} />
+                <NavItem view={AppView.SERP_ARMOR_BREAK} icon={Zap} label={t.kgr} />
+                <NavItem view={AppView.ONPAGE_ANALYZER} icon={ScanSearch} label={t.onpage} />
+                <NavItem view={AppView.PROMPT_LIBRARY} icon={Bot} label={t.prompts} />
+                <NavItem view={AppView.TRACKING} icon={LineChart} label={t.tracking} />
+                <NavItem view={AppView.CONTENT_MAGIC} icon={Wand2} label={t.content} />
+                <NavItem view={AppView.OUTREACH} icon={SendHorizontal} label={t.outreach} />
+                <NavItem view={AppView.ACADEMY} icon={BookOpen} label={t.academy} />
+                <NavItem view={AppView.EXTRA_INCOME} icon={Coins} label={t.extra} />
+                
+                <div className="pt-4 border-t border-slate-800 mt-4">
+                  <button 
+                    onClick={startTour}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all"
+                  >
+                    <HelpCircle className="w-5 h-5" />
+                    <span className="font-medium">Help Tour</span>
+                  </button>
+                </div>
+            </nav>
           </div>
+        )}
+
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto p-4 lg:p-8 relative scrollbar-thin">
+           <div className="max-w-7xl mx-auto">
+             {renderContent()}
+           </div>
         </div>
       </main>
-
-      {/* Onboarding Tour Component */}
-      {showTour && (
-        <div className="fixed inset-0 z-[100]">
-          <OnboardingTour lang={language} onClose={() => setShowTour(true)} />
-        </div>
-      )}
     </div>
   );
 };
