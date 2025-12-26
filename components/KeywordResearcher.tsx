@@ -1,8 +1,8 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Search, Target, TrendingUp, DollarSign, BookOpen, Loader2, Download, Save, FolderOpen, ArrowUp, ArrowDown, ArrowUpDown, Swords, Users, Check, Wand2, Copy, Terminal, Zap, Globe } from 'lucide-react';
 import { generateKeywords, analyzeCompetitorGap } from '../services/geminiService';
-import { KeywordIdea, Language, KeywordMode, AppView } from '../types1';
-import { translations } from '../utils/translations1';
+import { KeywordIdea, Language, KeywordMode, AppView } from '../types'; // Corrigido de types1 para types
+import { translations } from '../utils/translations'; // Corrigido de translations1 para translations
 
 interface KeywordResearcherProps {
   lang: Language;
@@ -18,252 +18,122 @@ const KeywordResearcher: React.FC<KeywordResearcherProps> = ({ lang, onNavigate 
   const [competitorUrl, setCompetitorUrl] = useState('');
   const [competitorTopic, setCompetitorTopic] = useState('');
   const [loading, setLoading] = useState(false);
-  const [manualJson, setManualJson] = useState('');
   const [keywords, setKeywords] = useState<KeywordIdea[]>([]);
   const [sortConfig, setSortConfig] = useState<{ key: SortKey | null; direction: SortDirection }>({ 
     key: null, 
     direction: 'asc' 
   });
 
-  const t = translations[lang].keywords;
-
-  const copiarSuperPrompt = () => {
-    const nicho = mode === 'discovery' ? seed : competitorTopic;
-    const prompt = `Atue como um Especialista em SEO SAB (Serp Armor Breaker).
-Analise o nicho "${nicho || '[DIGITE O NICHO]'}".
-Procure por "Fendas na Armadura": palavras-chave onde o Top 5 é dominado por fóruns (Reddit/Quora) ou sites de baixa autoridade.
-FOCO: Keywords de "Volume Zero" com alta intenção de compra.
-
-RETORNE APENAS O JSON NO FORMATO:
-[
-  {
-    "keyword": "...",
-    "intent": "Informational | Commercial | Transactional",
-    "difficulty": "Ex: Fenda detectada - Top 3 dominado por fóruns",
-    "contentIdea": "Título Skyscraper com profundidade semântica"
-  }
-]`;
-    navigator.clipboard.writeText(prompt);
-    alert("Missão de Espionagem SAB copiada! Agora cole-a no Gemini.");
+  // PROTEÇÃO: Garante que as traduções existam
+  const tBase = translations[lang] || translations['pt'];
+  const t = tBase.keywords || {
+    title: "Pesquisa de Palavras-chave",
+    subtitle: "Encontre brechas na armadura dos competidores",
+    placeholder: "Digite um termo...",
+    button: "Analisar",
+    mode_discovery: "Descoberta",
+    mode_gap: "Competitor Gap"
   };
 
-  const handleManualRender = () => {
-    try {
-      const data = JSON.parse(manualJson);
-      setKeywords(Array.isArray(data) ? data : data.keywords || []);
-      setManualJson('');
-    } catch (e) {
-      alert("Erro ao ler o JSON. Certifique-se de copiar exatamente o bloco [] gerado pelo Gemini.");
-    }
-  };
-
-  const handleSearch = async () => {
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!seed && mode === 'discovery') return;
     setLoading(true);
     try {
-      const results = mode === 'discovery' 
-        ? await generateKeywords(seed, lang)
-        : await analyzeCompetitorGap(competitorUrl, competitorTopic, lang);
+      const results = await generateKeywords(seed, lang);
       setKeywords(results);
     } catch (error) {
       console.error(error);
+      alert("Erro ao gerar palavras-chave.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCreateContent = (title: string) => {
-    localStorage.setItem('pendingContentTitle', title);
-    onNavigate(AppView.STRATEGY_WIZARD);
-  };
-
-  // Lógica de Ordenação
-  const sortedKeywords = useMemo(() => {
-    const sortableItems = [...keywords];
-    if (sortConfig.key !== null) {
-      sortableItems.sort((a, b) => {
-        const aValue = a[sortConfig.key!];
-        const bValue = b[sortConfig.key!];
-        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
-        return 0;
-      });
-    }
-    return sortableItems;
-  }, [keywords, sortConfig]);
-
-  const requestSort = (key: SortKey) => {
-    let direction: SortDirection = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
-    setSortConfig({ key, direction });
-  };
-
-  const getIntentIcon = (intent: string) => {
-    switch (intent) {
-      case 'Informational': return <BookOpen className="w-4 h-4 text-blue-400" />;
-      case 'Commercial': return <TrendingUp className="w-4 h-4 text-purple-400" />;
-      case 'Transactional': return <DollarSign className="w-4 h-4 text-emerald-400" />;
-      default: return <Target className="w-4 h-4 text-slate-400" />;
-    }
+  const handleCreateContent = (topic: string) => {
+    localStorage.setItem('bm_draft_topic', topic);
+    onNavigate(AppView.CONTENT_MAGIC);
   };
 
   return (
-    <div className="space-y-8">
-      {/* SELEÇÃO DE MODO */}
-      <div className="flex p-1 bg-slate-900/50 rounded-2xl border border-slate-800 w-fit mx-auto">
-        <button
-          onClick={() => setMode('discovery')}
-          className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${mode === 'discovery' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
-        >
-          <Search className="w-4 h-4" /> {t.modes.discovery}
-        </button>
-        <button
-          onClick={() => setMode('competitor')}
-          className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${mode === 'competitor' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
-        >
-          <Swords className="w-4 h-4" /> {t.modes.competitor}
-        </button>
-      </div>
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="bg-slate-800 p-8 rounded-2xl border border-slate-700 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-10">
+          <Target className="w-32 h-32 text-indigo-500" />
+        </div>
+        
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="bg-indigo-600 p-2 rounded-lg">
+              <Swords className="w-6 h-6 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-white">{t.title}</h2>
+          </div>
+          <p className="text-slate-400">{t.subtitle}</p>
 
-      <div className="bg-slate-800/50 p-8 rounded-3xl border border-slate-700 shadow-2xl backdrop-blur-sm">
-        <div className="space-y-6">
-          {mode === 'discovery' ? (
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400" />
+          <form onSubmit={handleSearch} className="mt-8 flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
               <input
                 type="text"
                 value={seed}
                 onChange={(e) => setSeed(e.target.value)}
-                placeholder={t.placeholders.seed}
-                className="w-full bg-slate-900/50 border-2 border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white focus:border-indigo-500 outline-none transition-all"
+                placeholder={t.placeholder}
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl py-4 pl-12 pr-4 text-white focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
               />
             </div>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-4">
-              <input
-                type="text"
-                value={competitorUrl}
-                onChange={(e) => setCompetitorUrl(e.target.value)}
-                placeholder={t.placeholders.url}
-                className="bg-slate-900/50 border-2 border-slate-700 rounded-2xl py-4 px-6 text-white focus:border-indigo-500 outline-none transition-all"
-              />
-              <input
-                type="text"
-                value={competitorTopic}
-                onChange={(e) => setCompetitorTopic(e.target.value)}
-                placeholder={t.placeholders.topic}
-                className="bg-slate-900/50 border-2 border-slate-700 rounded-2xl py-4 px-6 text-white focus:border-indigo-500 outline-none transition-all"
-              />
-            </div>
-          )}
-
-          <button
-            onClick={handleSearch}
-            disabled={loading || (mode === 'discovery' ? !seed : !competitorUrl)}
-            className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-600/20"
-          >
-            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Zap className="w-6 h-6" />}
-            {t.searchButton}
-          </button>
-
-          {/* SEÇÃO DE COMANDO - ESTILO MARKETPULSE */}
-          <div className="mt-8 pt-8 border-t border-slate-700/50">
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
-              <button
-                onClick={copiarSuperPrompt}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20"
-              >
-                <Copy className="w-5 h-5" /> Copiar Missão de Espionagem
-              </button>
-              
-              <button
-                onClick={() => window.open('https://gemini.google.com/app', '_blank')}
-                className="flex-1 bg-white hover:bg-slate-100 text-slate-900 px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg"
-              >
-                <Terminal className="w-5 h-5 text-indigo-600" /> Abrir Gemini para colar Prompt
-              </button>
-            </div>
-
-            <div className="mb-4 p-4 bg-indigo-950/30 border border-indigo-500/20 rounded-lg">
-              <p className="text-indigo-300 text-sm mb-2 font-semibold flex items-center gap-2">
-                <Globe className="w-4 h-4" /> Protocolo SAB:
-              </p>
-              <ul className="text-slate-300 text-xs space-y-1 list-disc ml-4">
-                <li>Copie o <strong>Super Prompt</strong> de espionagem acima.</li>
-                <li>Abra o Gemini e cole o comando para iniciar a varredura de fendas.</li>
-                <li>Copie o código JSON resultante (incluindo os colchetes [ ]).</li>
-                <li>Cole no campo abaixo para listar as palavras-chave de baixa competição.</li>
-              </ul>
-            </div>
-
-            <textarea
-              value={manualJson}
-              onChange={(e) => setManualJson(e.target.value)}
-              placeholder="Cole o array JSON [ ... ] retornado pelo Gemini aqui..."
-              className="w-full h-32 bg-slate-900 border border-slate-700 rounded-xl p-4 text-emerald-400 font-mono text-sm focus:border-indigo-500 outline-none transition-all"
-            />
-            
-            <button 
-              onClick={handleManualRender}
-              className="mt-3 w-full bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 border border-emerald-600/50 py-3 rounded-xl text-sm font-bold transition-all uppercase"
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white px-8 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-900/40"
             >
-              Materializar Palavras-Chave no Painel
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
+              {t.button}
             </button>
-          </div>
+          </form>
         </div>
       </div>
 
       {keywords.length > 0 && (
-        <div className="bg-slate-800/50 rounded-3xl border border-slate-700 overflow-hidden shadow-xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-900/50 border-b border-slate-700">
-                  <th onClick={() => requestSort('keyword')} className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest cursor-pointer hover:text-white">
-                    <div className="flex items-center gap-2">Keyword <ArrowUpDown className="w-3 h-3" /></div>
-                  </th>
-                  <th onClick={() => requestSort('intent')} className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest cursor-pointer hover:text-white">
-                    <div className="flex items-center gap-2">Intenção <ArrowUpDown className="w-3 h-3" /></div>
-                  </th>
-                  <th onClick={() => requestSort('difficulty')} className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest cursor-pointer hover:text-white">
-                    <div className="flex items-center gap-2">Fenda SAB <ArrowUpDown className="w-3 h-3" /></div>
-                  </th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Ação Sugerida</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-700/50">
-                {sortedKeywords.map((kw, index) => (
-                  <tr key={index} className="hover:bg-indigo-500/5 transition-colors group">
-                    <td className="px-6 py-4 text-white font-medium">{kw.keyword}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        {getIntentIcon(kw.intent)}
-                        <span className="text-sm text-slate-300">{kw.intent}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                        {kw.difficulty}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-slate-300 text-sm">
-                      <div className="flex items-center justify-between gap-4">
-                         <span>{kw.contentIdea}</span>
-                         <button 
-                          onClick={() => handleCreateContent(kw.contentIdea)} 
-                          title="Criar Estratégia de Conteúdo"
-                          className="opacity-0 group-hover:opacity-100 p-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white transition-all shadow-lg shadow-indigo-600/40"
-                         >
-                          <Wand2 className="w-4 h-4" />
-                         </button>
-                      </div>
-                    </td>
+        <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-xl">
+           <div className="p-6 border-b border-slate-700 bg-slate-800/50 flex justify-between items-center">
+              <h3 className="font-bold text-white flex items-center gap-2">
+                <Target className="w-5 h-5 text-indigo-400" /> Resultados Encontrados
+              </h3>
+           </div>
+           <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-slate-900/50 text-slate-400 text-xs uppercase tracking-widest">
+                    <th className="px-6 py-4 font-bold">Palavra-Chave</th>
+                    <th className="px-6 py-4 font-bold text-center">Volume</th>
+                    <th className="px-6 py-4 font-bold text-center">Dificuldade</th>
+                    <th className="px-6 py-4 font-bold">Ação</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-700">
+                  {keywords.map((kw, i) => (
+                    <tr key={i} className="hover:bg-slate-700/30 transition-colors group">
+                      <td className="px-6 py-4 font-medium text-white">{kw.keyword}</td>
+                      <td className="px-6 py-4 text-center text-slate-300">{kw.volume}</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="px-2 py-1 rounded bg-slate-900 text-indigo-400 text-xs border border-indigo-500/20">
+                          {kw.difficulty}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <button 
+                          onClick={() => handleCreateContent(kw.keyword)}
+                          className="p-2 bg-indigo-600 rounded-lg text-white hover:bg-indigo-500 transition-all"
+                        >
+                          <Wand2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+           </div>
         </div>
       )}
     </div>
