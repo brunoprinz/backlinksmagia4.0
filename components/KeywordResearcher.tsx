@@ -1,50 +1,47 @@
-import React, { useState, useMemo } from 'react';
-import { Search, Target, TrendingUp, DollarSign, BookOpen, Loader2, Download, Save, FolderOpen, ArrowUp, ArrowDown, ArrowUpDown, Swords, Users, Check, Wand2, Copy, Terminal, Zap, Globe } from 'lucide-react';
-import { generateKeywords, analyzeCompetitorGap } from '../services/geminiService';
-import { KeywordIdea, Language, KeywordMode, AppView } from '../types'; // Corrigido de types1 para types
-import { translations } from '../utils/translations'; // Corrigido de translations1 para translations
+import React, { useState } from 'react';
+import { Search, Target, Loader2, Swords, Zap, Wand2, Globe } from 'lucide-react';
+import { generateKeywords } from '../services/geminiService';
+import { KeywordIdea, Language, KeywordMode, AppView } from '../types';
+import { translations } from '../utils/translations';
 
 interface KeywordResearcherProps {
   lang: Language;
   onNavigate: (view: AppView) => void;
 }
 
-type SortKey = keyof KeywordIdea;
-type SortDirection = 'asc' | 'desc';
-
 const KeywordResearcher: React.FC<KeywordResearcherProps> = ({ lang, onNavigate }) => {
-  const [mode, setMode] = useState<KeywordMode>('discovery');
   const [seed, setSeed] = useState('');
-  const [competitorUrl, setCompetitorUrl] = useState('');
-  const [competitorTopic, setCompetitorTopic] = useState('');
   const [loading, setLoading] = useState(false);
   const [keywords, setKeywords] = useState<KeywordIdea[]>([]);
-  const [sortConfig, setSortConfig] = useState<{ key: SortKey | null; direction: SortDirection }>({ 
-    key: null, 
-    direction: 'asc' 
-  });
 
-  // PROTEÇÃO: Garante que as traduções existam
+  // Tradução com Fallback seguro
   const tBase = translations[lang] || translations['pt'];
   const t = tBase.keywords || {
-    title: "Pesquisa de Palavras-chave",
+    title: "Pesquisa SAB - Rank Ninja",
     subtitle: "Encontre brechas na armadura dos competidores",
-    placeholder: "Digite um termo...",
+    placeholder: "Digite um termo ou nicho...",
     button: "Analisar",
-    mode_discovery: "Descoberta",
-    mode_gap: "Competitor Gap"
+    no_results: "Nenhum resultado encontrado."
   };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!seed && mode === 'discovery') return;
+    if (!seed.trim()) return;
+
     setLoading(true);
     try {
+      // Chamada real ao serviço Gemini
       const results = await generateKeywords(seed, lang);
-      setKeywords(results);
+      
+      // Se o serviço retornar algo, atualizamos o estado
+      if (results && Array.isArray(results)) {
+        setKeywords(results);
+      } else {
+        alert("A IA não retornou dados formatados corretamente.");
+      }
     } catch (error) {
-      console.error(error);
-      alert("Erro ao gerar palavras-chave.");
+      console.error("Erro na busca:", error);
+      alert("Erro ao conectar com a IA. Verifique sua chave API ou conexão.");
     } finally {
       setLoading(false);
     }
@@ -57,6 +54,7 @@ const KeywordResearcher: React.FC<KeywordResearcherProps> = ({ lang, onNavigate 
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Box de Busca */}
       <div className="bg-slate-800 p-8 rounded-2xl border border-slate-700 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 p-8 opacity-10">
           <Target className="w-32 h-32 text-indigo-500" />
@@ -94,11 +92,12 @@ const KeywordResearcher: React.FC<KeywordResearcherProps> = ({ lang, onNavigate 
         </div>
       </div>
 
+      {/* Tabela de Resultados */}
       {keywords.length > 0 && (
         <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-xl">
-           <div className="p-6 border-b border-slate-700 bg-slate-800/50 flex justify-between items-center">
+           <div className="p-6 border-b border-slate-700 bg-slate-800/50">
               <h3 className="font-bold text-white flex items-center gap-2">
-                <Target className="w-5 h-5 text-indigo-400" /> Resultados Encontrados
+                <Target className="w-5 h-5 text-indigo-400" /> Oportunidades Identificadas
               </h3>
            </div>
            <div className="overflow-x-auto">
@@ -108,25 +107,37 @@ const KeywordResearcher: React.FC<KeywordResearcherProps> = ({ lang, onNavigate 
                     <th className="px-6 py-4 font-bold">Palavra-Chave</th>
                     <th className="px-6 py-4 font-bold text-center">Volume</th>
                     <th className="px-6 py-4 font-bold text-center">Dificuldade</th>
+                    <th className="px-6 py-4 font-bold">Sugestão de Conteúdo</th>
                     <th className="px-6 py-4 font-bold">Ação</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-700">
                   {keywords.map((kw, i) => (
                     <tr key={i} className="hover:bg-slate-700/30 transition-colors group">
-                      <td className="px-6 py-4 font-medium text-white">{kw.keyword}</td>
-                      <td className="px-6 py-4 text-center text-slate-300">{kw.volume}</td>
+                      <td className="px-6 py-4">
+                        <div className="font-medium text-white">{kw.keyword}</div>
+                        <div className="text-[10px] text-slate-500 uppercase mt-1">{kw.intent || 'Informativo'}</div>
+                      </td>
+                      <td className="px-6 py-4 text-center text-slate-300 font-mono">{kw.volume}</td>
                       <td className="px-6 py-4 text-center">
-                        <span className="px-2 py-1 rounded bg-slate-900 text-indigo-400 text-xs border border-indigo-500/20">
+                        <span className={`px-2 py-1 rounded text-[10px] font-bold border ${
+                          parseInt(kw.difficulty) < 30 
+                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                          : 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+                        }`}>
                           {kw.difficulty}
                         </span>
                       </td>
+                      <td className="px-6 py-4 text-sm text-slate-400 italic">
+                        {kw.contentIdea || 'Análise de nicho disponível'}
+                      </td>
                       <td className="px-6 py-4">
                         <button 
-                          onClick={() => handleCreateContent(kw.keyword)}
-                          className="p-2 bg-indigo-600 rounded-lg text-white hover:bg-indigo-500 transition-all"
+                          onClick={() => handleCreateContent(kw.contentIdea || kw.keyword)}
+                          className="flex items-center gap-2 px-3 py-2 bg-slate-900 hover:bg-indigo-600 rounded-lg text-white transition-all text-xs border border-slate-700"
                         >
-                          <Wand2 className="w-4 h-4" />
+                          <Wand2 className="w-3.5 h-3.5" />
+                          Mago
                         </button>
                       </td>
                     </tr>
