@@ -53,10 +53,8 @@ const StrategyWizard: React.FC<StrategyWizardProps> = ({ lang, onNavigate }) => 
 
   const copiarPromptEstrategia = () => {
     const prompt = `Você é o Oráculo SAB do Backlinks Magia.
-Cenário Atual: "${scenarioInfo.youtube.title}"
-Minha Missão: [DESCREVA SEU OBJETIVO AQUI]
-
-Crie um Plano de Batalha de 5 passos focado em encontrar vulnerabilidades competitivas e quebrar a armadura da SERP/YouTube.
+Cenário Atual e Missão (escolha a opção a seguir que mais ressoa com você): "Estou começando do zero e quero encontrar as primeiras fendas na armadura do mercado de [seu nicho] / Já tenho tráfego, agora quero descobrir como atropelar os gigantes de [seu nicho]/ Criar autoridade com videos únicos em meu canal do youtube sobre [seu nicho] / meu site não aparece no google, quero descobrir o que está me bloqueando/ meu site, projeto ou canal do youtube parou de subir nas classificações ou estagnou quero descobrir onde está o gap na minha estratégia"
+Crie um Plano de Batalha de 5 passos focado em encontrar vulnerabilidades competitivas e quebrar a armadura da SERP dos Mecanismos/YouTube.
 Retorne um checklist acionável.`;
     navigator.clipboard.writeText(prompt);
     alert(lang === 'en' ? "Mission copied! Paste it in Gemini." : "Missão copiada! Cole no Gemini para o plano detalhado.");
@@ -190,5 +188,6 @@ const StepCard = ({ step, title, description, icon: Icon, onClick }: any) => (
     </button>
   </div>
 );
+
 
 export default StrategyWizard;
