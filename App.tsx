@@ -87,7 +87,7 @@ const App: React.FC = () => {
           <NavItem view={AppView.PROMPT_LIBRARY} icon={Bot} label={t.nav?.prompts} />
           <NavItem view={AppView.TRACKING} icon={LineChart} label={t.nav?.tracking} />
           <NavItem view={AppView.CONTENT_MAGIC} icon={Wand2} label={t.nav?.content} />
-          <NavItem view={AppView.OPPORTUNITIES} icon={Telescope} label={t.opportunities} />
+          <NavItem view={AppView.OPPORTUNITIES} icon={Telescope} label={t.nav?.opportunities} />
           <NavItem view={AppView.OUTREACH} icon={SendHorizontal} label={t.nav?.outreach} />
 
           <div className="pt-4 pb-2 px-4">
@@ -158,4 +158,5 @@ const App: React.FC = () => {
 };
 
 export default App;
+
 
