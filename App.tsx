@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, Telescope, Wand2, SendHorizontal, Menu, X, Target, BookOpen, LineChart, Calculator, Compass, Globe, HelpCircle, ScanSearch, Coins, Bot, Star } from 'lucide-react';
-import { AppView, Language } from './types1';
+import { AppView, Language } from './types';
 import { translations } from './utils/translations';
 import Dashboard from './components/Dashboard';
 import OpportunityFinder from './components/OpportunityFinder';
@@ -232,5 +232,6 @@ const App: React.FC = () => {
     </div>
   );
 };
+
 
 export default App;
