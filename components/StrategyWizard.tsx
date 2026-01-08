@@ -1,9 +1,9 @@
 ﻿import React, { useState } from 'react';
 import { 
-  Compass, HelpCircle, AlertTriangle, Play, TrendingUp, Search, Target, 
-  Mail, Calculator, Wand2, ArrowRight, CheckCircle2, ShieldCheck, 
-  LineChart, Swords, Zap, Radar, Terminal, Copy, Youtube, Video, 
-  Globe, MessageSquare, Star
+  Compass, HelpCircle, AlertTriangle, TrendingUp, Search, Target, 
+  Mail, Wand2, ArrowRight, ShieldCheck, 
+  LineChart, Swords, Zap, Radar, Terminal, Copy, Youtube, 
+  ScanSearch, BarChart3
 } from 'lucide-react';
 import { AppView, Language } from '../types';
 import { translations } from '../utils/translations';
@@ -19,7 +19,6 @@ const StrategyWizard: React.FC<StrategyWizardProps> = ({ lang, onNavigate }) => 
   const [selectedScenario, setSelectedScenario] = useState<ScenarioId | null>(null);
   const t = translations[lang].wizard;
 
-  // Textos Dinâmicos para os Cenários (PT/EN)
   const scenarioInfo = {
     pt: {
       new_project: { title: "Nicho Novo (SAB)", desc: "Como começar do zero e encontrar as primeiras fendas na armadura." },
@@ -32,14 +31,14 @@ const StrategyWizard: React.FC<StrategyWizardProps> = ({ lang, onNavigate }) => 
       ask_oracle: "PEDIR PLANO AO ORÁCULO"
     },
     en: {
-      new_project: { title: "New Niche (SAB)", desc: "Start from scratch and find the first armor breaches in your niche." },
+      new_project: { title: "New Niche (SAB)", desc: "Start from scratch and find the first armor breaches." },
       growth: { title: "Authority Scaling", desc: "You already have traffic, now let's crush the giants with SAB." },
-      not_indexed: { title: "Indexing Rescue", desc: "Your site isn't showing up? Let's fix the bot blockage." },
-      site_audit: { title: "Elite Audit", desc: "Analyze why your rankings stalled and where the errors are." },
-      youtube: { title: "YouTube Domination", desc: "Build authority with video without needing a blog right now." },
+      not_indexed: { title: "Indexing Rescue", desc: "Site isn't showing up? Let's fix the bot blockage." },
+      site_audit: { title: "Elite Audit", desc: "Analyze why rankings stalled and where the errors are." },
+      youtube: { title: "YouTube Domination", desc: "Build authority with video without needing a blog." },
       back_btn: "← Back to Start",
       mission_title: "SAB Domination Plan",
-      ask_oracle: "ASK THE ORACLE FOR PLAN"
+      ask_oracle: "ASK THE ORACLE"
     }
   }[lang];
 
@@ -52,60 +51,81 @@ const StrategyWizard: React.FC<StrategyWizardProps> = ({ lang, onNavigate }) => 
   ];
 
   const copiarPromptEstrategia = () => {
-    const prompt = `Você é o Oráculo SAB do Backlinks Magia.
-Cenário Atual e Missão (escolha a opção a seguir que mais ressoa com você): "Estou começando do zero e quero encontrar as primeiras fendas na armadura do mercado de [seu nicho] / Já tenho tráfego, agora quero descobrir como atropelar os gigantes de [seu nicho]/ Criar autoridade com videos únicos em meu canal do youtube sobre [seu nicho] / meu site não aparece no google, quero descobrir o que está me bloqueando/ meu site, projeto ou canal do youtube parou de subir nas classificações ou estagnou quero descobrir onde está o gap na minha estratégia"
-Crie um Plano de Batalha de 5 passos focado em encontrar vulnerabilidades competitivas e quebrar a armadura da SERP dos Mecanismos/YouTube.
-Retorne um checklist acionável.`;
+    const subtopicosMap: Record<string, string> = {
+      new_project: "FOCO: Mapear Vulnerabilidades (AllInTitle), Explorar Fendas (Fóruns/Low DA) e Conteúdo Skyscraper.",
+      youtube: "FOCO: Pesquisa de Vídeo SAB, Roteirização de Elite, SEO On-Video e Sinais Sociais.",
+      growth: "FOCO: Atropelar Gigantes, Expansão de Autoridade Tópica e Backlinks de Contexto.",
+      not_indexed: "FOCO: Resgate de Indexação, Bloqueios de Crawler e Diagnóstico de Autoridade.",
+      site_audit: "FOCO: Auditoria de Elite, Gaps de Conteúdo e Otimização de Arquitetura Semântica."
+    };
+
+    const cenarioNome = (scenarioInfo as any)[selectedScenario || 'new_project'].title;
+    const focoSubtopicos = subtopicosMap[selectedScenario || 'new_project'];
+
+    const prompt = `### PROTOCOLO ORÁCULO SAB - OPERAÇÃO DE DOMÍNIO ###
+Atue como o Oráculo SAB (Serp Armor Breaker) do sistema Backlinks Magia 4.0. 
+
+OPERACIONAL SELECIONADO: ${cenarioNome}
+MISSÃO ATUAL: ${focoSubtopicos}
+
+CONTEXTO ESTRATÉGICO (Manifesto 4.0):
+1. Ignore métricas de vaidade. Foque em fendas reais (Vídeos, Fóruns, User Content).
+2. Use Inteligência Preditiva para estimar intenção transacional.
+3. Alvo final: Autoridade Tópica Inquestionável.
+
+MEU NICHO/PROJETO: [INSIRA SEU NICHO AQUI]
+
+Crie um Plano de Batalha de 5 passos com checkmarks acionáveis para quebrar a armadura da SERP e ocupar o espaço dos concorrentes agora.`;
+
     navigator.clipboard.writeText(prompt);
-    alert(lang === 'en' ? "Mission copied! Paste it in Gemini." : "Missão copiada! Cole no Gemini para o plano detalhado.");
+    alert(lang === 'en' ? "SAB Protocol copied!" : "Protocolo SAB Copiado! Estratégia alinhada com os subtópicos do cenário.");
   };
 
   const renderActionPlan = () => {
     switch (selectedScenario) {
-      case 'youtube':
-        return (
-          <div className="space-y-4 animate-in slide-in-from-right-4">
-            <StepCard 
-              step="01" 
-              title={lang === 'en' ? "SAB Video Research" : "Pesquisa de Vídeo SAB"} 
-              description={lang === 'en' ? "Search keywords on Google. If a video is in the Top 3, it's an armor breach you can exploit." : "Pesquise keywords no Google. Se houver um vídeo no Top 3, é uma fenda de armadura que você pode explorar."}
-              icon={Search}
-              onClick={() => onNavigate('keyword-research')}
-            />
-            <StepCard 
-              step="02" 
-              title={lang === 'en' ? "Elite Scripting" : "Roteirização de Elite"} 
-              description={lang === 'en' ? "Use Content Magician to create a script with psychological hooks and semantic entities." : "Use o Mago do Conteúdo para criar um roteiro com ganchos psicológicos e entidades semânticas."}
-              icon={Wand2}
-              onClick={() => onNavigate('content-magician')}
-            />
-            <StepCard 
-              step="03" 
-              title={lang === 'en' ? "Video SEO Boost" : "Impulso de SEO no Vídeo"} 
-              description={lang === 'en' ? "Optimize Title, Description and Tags using keywords found in the SAB module." : "Otimize Título, Descrição e Tags usando as keywords encontradas no módulo SAB."}
-              icon={Target}
-              onClick={() => onNavigate('keyword-research')}
-            />
-            <StepCard 
-              step="04" 
-              title={lang === 'en' ? "Social Signals & Backlinks" : "Sinais Sociais & Backlinks"} 
-              description={lang === 'en' ? "Share the video URL in the Outreach module to gain initial authority embeds." : "Compartilhe a URL do vídeo no módulo Outreach para ganhar embeds e autoridade inicial."}
-              icon={Mail}
-              onClick={() => onNavigate('outreach')}
-            />
-          </div>
-        );
       case 'new_project':
         return (
           <div className="space-y-4 animate-in slide-in-from-right-4">
-            <StepCard step="01" title="Mapear Vulnerabilidades" description="Use o Keyword Researcher para encontrar termos 'AllInTitle' baixos." icon={Search} onClick={() => onNavigate('keyword-research')} />
-            <StepCard step="02" title="Explorar Fendas (SAB)" description="Verifique se o Top 10 tem fóruns ou sites irrelevantes." icon={Swords} onClick={() => onNavigate('kgr-calculator')} />
-            <StepCard step="03" title="Conteúdo Skyscraper" description="Crie algo 10x melhor que o atual Top 1 com o Mago do Conteúdo." icon={Wand2} onClick={() => onNavigate('content-magician')} />
+            <StepCard step="01" title="Mapear Vulnerabilidades" description="Use o Keyword Researcher para encontrar termos 'AllInTitle' baixos." icon={Search} onClick={() => onNavigate(AppView.KEYWORDS)} />
+            <StepCard step="02" title="Explorar Fendas (SAB)" description="Verifique se o Top 10 tem fóruns ou sites irrelevantes." icon={Swords} onClick={() => onNavigate(AppView.SERP_ARMOR_BREAKER)} />
+            <StepCard step="03" title="Conteúdo Skyscraper" description="Crie algo 10x melhor que o atual Top 1 com o Mago do Conteúdo." icon={Wand2} onClick={() => onNavigate(AppView.CONTENT_MAGIC)} />
           </div>
         );
-      // ... (outros cases seguem a mesma lógica simplificada)
+      case 'growth':
+        return (
+          <div className="space-y-4 animate-in slide-in-from-right-4">
+            <StepCard step="01" title="Engenharia Reversa" description="Identifique os backlinks dos gigantes que você pode replicar no Outreach." icon={BarChart3} onClick={() => onNavigate(AppView.OUTREACH)} />
+            <StepCard step="02" title="Clusters de Autoridade" description="Crie silos de conteúdo interligados para dominar um tópico inteiro." icon={Target} onClick={() => onNavigate(AppView.CONTENT_MAGIC)} />
+            <StepCard step="03" title="Monitoramento de Ranking" description="Acompanhe sua subida e ajuste o SEO On-Page onde houver queda." icon={LineChart} onClick={() => onNavigate(AppView.TRACKING)} />
+          </div>
+        );
+      case 'youtube':
+        return (
+          <div className="space-y-4 animate-in slide-in-from-right-4">
+            <StepCard step="01" title="Pesquisa de Vídeo SAB" description="Se houver um vídeo no Top 3 do Google, é uma fenda para explorar." icon={Search} onClick={() => onNavigate(AppView.KEYWORDS)} />
+            <StepCard step="02" title="Roteirização de Elite" description="Use o Mago do Conteúdo para criar roteiros com ganchos psicológicos." icon={Wand2} onClick={() => onNavigate(AppView.CONTENT_MAGIC)} />
+            <StepCard step="03" title="Impulso de SEO no Vídeo" description="Otimize Título e Tags usando as keywords encontradas no SAB." icon={Target} onClick={() => onNavigate(AppView.KEYWORDS)} />
+            <StepCard step="04" title="Sinais Sociais & Backlinks" description="Ganhe autoridade inicial compartilhando no módulo de Outreach." icon={Mail} onClick={() => onNavigate(AppView.OUTREACH)} />
+          </div>
+        );
+      case 'not_indexed':
+        return (
+          <div className="space-y-4 animate-in slide-in-from-right-4">
+            <StepCard step="01" title="Diagnóstico de Crawler" description="Verifique se há bloqueios técnicos no seu On-Page Analyzer." icon={ScanSearch} onClick={() => onNavigate(AppView.ONPAGE_ANALYZER)} />
+            <StepCard step="02" title="Forçar Indexação" description="Crie sinais externos através de menções sociais no módulo Outreach." icon={Zap} onClick={() => onNavigate(AppView.OUTREACH)} />
+            <StepCard step="03" title="Qualidade de Conteúdo" description="Refaça textos pobres usando as diretrizes do Mago do Conteúdo." icon={Wand2} onClick={() => onNavigate(AppView.CONTENT_MAGIC)} />
+          </div>
+        );
+      case 'site_audit':
+        return (
+          <div className="space-y-4 animate-in slide-in-from-right-4">
+            <StepCard step="01" title="Auditoria On-Page" description="Encontre erros técnicos e gaps de palavras-chave no seu site." icon={ShieldCheck} onClick={() => onNavigate(AppView.ONPAGE_ANALYZER)} />
+            <StepCard step="02" title="Análise de Concorrência" description="Veja o que mudou na SERP e por que seus concorrentes subiram." icon={Compass} onClick={() => onNavigate(AppView.SERP_ARMOR_BREAKER)} />
+            <StepCard step="03" title="Reciclagem de Conteúdo" description="Atualize posts antigos para recuperar a relevância semântica." icon={Wand2} onClick={() => onNavigate(AppView.CONTENT_MAGIC)} />
+          </div>
+        );
       default:
-        return <div className="text-slate-500 italic p-10 text-center">Plano em fase de calibração mística...</div>;
+        return null;
     }
   };
 
@@ -148,12 +168,18 @@ Retorne um checklist acionável.`;
               <Zap className="text-indigo-500 fill-indigo-500 w-8 h-8" /> {scenarioInfo.mission_title}
             </h2>
             <div className="flex gap-3 w-full md:w-auto">
-                <button onClick={copiarPromptEstrategia} className="flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-600/20">
+              <button 
+                onClick={copiarPromptEstrategia}
+                className="flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-600/20"
+              >
                 <Copy className="w-4 h-4" /> {scenarioInfo.ask_oracle}
-                </button>
-                <button onClick={() => window.open('https://gemini.google.com/app', '_blank')} className="bg-white text-slate-900 px-6 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 hover:bg-slate-100 transition-all shadow-lg">
+              </button>
+              <button 
+                onClick={() => window.open('https://gemini.google.com/app', '_blank')}
+                className="bg-white text-slate-900 px-6 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 hover:bg-slate-100 transition-all shadow-lg"
+              >
                 <Terminal className="w-4 h-4 text-indigo-600" /> GEMINI
-                </button>
+              </button>
             </div>
           </div>
 
@@ -169,7 +195,7 @@ Retorne um checklist acionável.`;
 const StepCard = ({ step, title, description, icon: Icon, onClick }: any) => (
   <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 flex flex-col md:flex-row md:items-center gap-6 hover:border-indigo-500/30 transition-all group relative overflow-hidden">
     <div className="absolute top-0 right-0 p-2 opacity-5">
-        <Icon className="w-16 h-16" />
+      <Icon className="w-16 h-16" />
     </div>
     <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-indigo-400 font-black text-xl group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-inner">
       {step}
@@ -188,6 +214,5 @@ const StepCard = ({ step, title, description, icon: Icon, onClick }: any) => (
     </button>
   </div>
 );
-
 
 export default StrategyWizard;

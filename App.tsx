@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, Telescope, Wand2, SendHorizontal, Menu, X, 
   Target, BookOpen, LineChart, Compass, Globe, HelpCircle, 
@@ -22,6 +22,7 @@ import OnPageAnalyzer from './components/OnPageAnalyzer';
 import ExtraIncomeGuide from './components/ExtraIncomeGuide';
 import PromptLibrary from './components/PromptLibrary';
 import WhyBacklinksMagia from './components/WhyBacklinksMagia';
+import ManifestoModal from './components/ManifestoModal';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.DASHBOARD);
@@ -38,6 +39,30 @@ const App: React.FC = () => {
     setShowTour(true);
     setMobileMenuOpen(false);
   };
+
+const [showManifesto, setShowManifesto] = useState(false);
+
+useEffect(() => {
+  const hasSeenManifesto = localStorage.getItem('bm_manifesto_seen');
+  if (!hasSeenManifesto) {
+    setShowManifesto(true);
+  }
+}, []);
+
+const closeManifesto = () => {
+  setShowManifesto(false);
+  localStorage.setItem('bm_manifesto_seen', 'true');
+};
+
+// Ouvinte para iniciar o tour vindo do manifesto
+  useEffect(() => {
+    const handleStartTour = () => {
+      startTour(); // Chama a função que você já tem pronta
+    };
+    window.addEventListener('start-tour-from-manifesto', handleStartTour);
+    return () => window.removeEventListener('start-tour-from-manifesto', handleStartTour);
+  }, []);
+
 
   // Fecha menu mobile ao navegar
   useEffect(() => {
@@ -142,7 +167,7 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Tour Overlay */}
+ {/* Tour Overlay */}
       {showTour && (
         <div className="fixed inset-0 z-[100]">
           <OnboardingTour 
@@ -153,10 +178,11 @@ const App: React.FC = () => {
           />
         </div>
       )}
+
+      {/* Manifesto sempre no final para sobrepor tudo */}
+      <ManifestoModal isOpen={showManifesto} onClose={closeManifesto} />
     </div>
   );
 };
 
 export default App;
-
-
