@@ -1,4 +1,4 @@
-﻿[cite: 1]import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, Telescope, Wand2, SendHorizontal, Menu, X, 
   Target, BookOpen, LineChart, Compass, Globe, HelpCircle, 
