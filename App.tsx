@@ -208,7 +208,7 @@ const closeManifesto = () => {
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all"
                 >
                   <HelpCircle className="w-5 h-5" />
-                  <span className="font-medium">Help Tour</span>
+                  <span className="font-medium">Your Help Tour</span>
                 </button>
               </div>
             </div>
